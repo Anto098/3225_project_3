@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <meta charset="utf-8">
+    <title>PSYCHO</title>
+  </head>
+  <body>
+    <div class="container bg-light" id="login_div">
+      <h2>Se connecter :</h2>
+      <form action="#">
+        <label for="username">
+          Username <input type="text" class="form-control" id="username">
+        </label>
+        <br>
+        <label for="password">
+          Password <input type="password" class="form-control" id="password">
+        </label>
+        <br>
+        <label for="password_toggle">
+          Show Password <input type="checkbox" id="password_toggle" onclick="toggle_password()">
+        </label>
+        <br>
+        <label for="login">
+          <input type="submit" class="btn btn-primary" id="login" value="Login">
+        </label>
+      </form>
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>
