@@ -1,10 +1,10 @@
-console.log("salut")
-
 function toggle_password() {
-    let x = document.getElementById("password");
-    if (x.type === "password") {
-        x.type = "text";
+    let x = $("#password");
+    if (x.attr("type") === "password") {
+        x.attr("type","text");
     } else {
-        x.type = "password";
+        x.attr("type","password");
     }
 }
+
+let sam = new Sammy();
