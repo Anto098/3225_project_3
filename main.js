@@ -9,6 +9,10 @@ function toggle_password() {
 }
 
 let app = $.sammy('#main', function() {
+
+    this.get('#',function(){
+        console.log("this is a get request");
+    })
     this.post('#',function(){
         $('#login_message').text("Bienvenue " + this.params['username'] + ".");
     })
