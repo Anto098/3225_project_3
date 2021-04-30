@@ -14,12 +14,11 @@ function toggle_password() {
  * Sammy application logic. Manages functions associated with routes.
  */
 let app = $.sammy('body', function() {
-
-    this.get("", function () {
+    this.get("", function() {
         console.log("empty route")
     });
 
-    this.post('#',function(){
+    this.post('#',function() {
         $('#login_message').text("Bienvenue " + this.params['username'] + ".");
     })
 
@@ -37,3 +36,4 @@ let app = $.sammy('body', function() {
     })
 
 }).run();
+
