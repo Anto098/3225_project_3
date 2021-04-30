@@ -7,27 +7,30 @@
     <meta charset="utf-8">
     <title>PSYCHO</title>
   </head>
-  <body>
-    <div class="container bg-light" id="login_div">
-      <h2>Se connecter :</h2>
-      <form action="#">
-        <label for="username">
-          Username <input type="text" class="form-control" id="username">
-        </label>
-        <br>
-        <label for="password">
-          Password <input type="password" class="form-control" id="password">
-        </label>
-        <br>
-        <label for="password_toggle">
-          Show Password <input type="checkbox" id="password_toggle" onclick="toggle_password()">
-        </label>
-        <br>
-        <label for="login">
-          <input type="submit" class="btn btn-primary" id="login" value="Login">
-        </label>
-      </form>
-    </div>
+  <body id="main">
+
+      <div class="container bg-light" id="login_div">
+        <h2>Se connecter :</h2>
+        <form action="#" method="post">
+          <label for="username">
+            Username <input type="text" class="form-control" id="username" name="username">
+          </label>
+          <br>
+          <label for="password">
+            Password <input type="password" class="form-control" id="password" name="password">
+          </label>
+          <br>
+          <label for="password_toggle">
+            Show Password <input type="checkbox" id="password_toggle" onclick="toggle_password()">
+          </label>
+          <br>
+          <label for="login">
+            <input type="submit" class="btn btn-primary" id="login" value="Login">
+          </label>
+        </form>
+        <p id="login_message"></p>
+      </div>
+
   <script src="main.js"></script>
   </body>
 </html>
