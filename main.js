@@ -22,3 +22,4 @@ let app = $.sammy('body', function() {
         $('#login_message').text("Bienvenue " + this.params['username'] + ".");
     })
 }).run();
+
