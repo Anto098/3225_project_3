@@ -1,6 +1,8 @@
+/**
+ * toggles password on and off when button is clicked
+ */
 function toggle_password() {
     let x = $("#password");
-    console.log(x.attr("type"))
     if (x.attr("type") === "password") {
         x.attr("type","text");
     } else {
@@ -8,7 +10,15 @@ function toggle_password() {
     }
 }
 
-let app = $.sammy('#main', function() {
+/**
+ * Sammy application logic. Manages functions associated with routes.
+ */
+let app = $.sammy('body', function() {
+
+    this.get("", function () {
+        console.log("empty route")
+    });
+
     this.post('#',function(){
         $('#login_message').text("Bienvenue " + this.params['username'] + ".");
     })
