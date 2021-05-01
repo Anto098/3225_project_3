@@ -47,7 +47,7 @@ function register_or_login() {
         let email_serialized = $("#email").serialize();
         password = sha1($("#password").val());
         let password_serialized = "password="+password;
-        $.get("login.php",email_serialized, login);
+        $.get("login.php",email_serialized+"&"+password_serialized, login);
     } else {
         // TODO get variables from html
         console.log("trying to register");
@@ -66,8 +66,8 @@ function register() {
  * Executes the procedure required to login a user
  */
 function login(data) {
-    console.log("data : "+data+"\n email : "+email+" ,password : "+password);
-    if(data==email){
+    console.log(" server data : \n"+data+"\n user data : \nemail : "+email+", password : "+password);
+    if(data=="email : "+email+", password : "+password){
         console.log("user exists");
     } else {
         console.log("user doesn't exist");
