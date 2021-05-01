@@ -1,7 +1,7 @@
 <?php
-
-include("config-freq.php");
-include("opendb-diro.php");
+// les champs de la base sont connus
+include("config_freq.php");
+include("opendb_diro.php");
 $result = mysqli_query($conn, "SELECT * FROM " . $db_table . " LIMIT 5;");
 
 echo '<table border="1">';
@@ -13,4 +13,4 @@ while ($range = mysqli_fetch_assoc($result)) {
 }
 echo '</table>';
 mysqli_free_result($result);
-include('closedb-diro.php');
+include('closedb_diro.php');
