@@ -36,6 +36,7 @@ function toggle_register_login() {
 }
 
 var email; // email address entered by the user
+var password;
 /**
  * Tells which function to execute whether we're trying to login or register
  */
@@ -43,9 +44,9 @@ function register_or_login() {
     if(trying_to_login){
         console.log("trying to login");
         email = $("#email").val();
-        var email_serialized = $("#email").serialize();
-        console.log("email : "+email);
-        console.log("email_serialized : "+email_serialized);
+        let email_serialized = $("#email").serialize();
+        password = sha1($("#password").val());
+        let password_serialized = "password="+password;
         $.get("login.php",email_serialized, login);
     } else {
         // TODO get variables from html
@@ -65,7 +66,7 @@ function register() {
  * Executes the procedure required to login a user
  */
 function login(data) {
-    console.log("data : "+data+" email : "+email);
+    console.log("data : "+data+"\n email : "+email+" ,password : "+password);
     if(data==email){
         console.log("user exists");
     } else {
