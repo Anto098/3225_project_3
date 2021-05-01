@@ -1,4 +1,10 @@
 /**
+ * @type {boolean}
+ * keeps track of whether the user will try to connect or register when clicking the submit button
+ */
+var trying_to_connect = true;
+
+/**
  * toggles password on and off when button is clicked
  */
 function toggle_password() {
@@ -11,15 +17,31 @@ function toggle_password() {
 }
 
 /**
+ * toggles between `s'inscrire` and `se connecter`
+ */
+function toggle_inscrire_connecter() {
+    if(trying_to_connect) {
+        $("#register_connect_btn").attr("value","Connect ?");
+        $("#connect_register").html("Register : ");
+        $("#login").attr("value","Register!");
+        trying_to_connect = false;
+    } else {
+        $("#register_connect_btn").attr("value","Register?");
+        $("#connect_register").html("Login : ");
+        $("#login").attr("value","Login!");
+        trying_to_connect = true;
+    }
+}
+
+/**
  * Sammy application logic. Manages functions associated with routes.
  */
 let app = $.sammy('body', function() {
-
-    this.get("", function () {
+    this.get("", function() {
         console.log("empty route")
     });
 
-    this.post('#',function(){
+    this.post('#',function() {
         $('#login_message').text("Bienvenue " + this.params['username'] + ".");
     })
 
@@ -37,3 +59,4 @@ let app = $.sammy('body', function() {
     })
 
 }).run();
+
