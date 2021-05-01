@@ -10,9 +10,8 @@ if(!filter_var($db_email, FILTER_VALIDATE_EMAIL)){
 }
 $result = mysqli_query($conn, "SELECT EMAIL,USERNAME,PASSWORD,GAMES_PLAYED,SCORE FROM " . $db_name . "." . $db_table . " WHERE EMAIL=" . "'$db_email'" . ";");
 if ($range = mysqli_fetch_assoc($result)) {
-    $email = $range["EMAIL"];
-    $password = $range["PASSWORD"];
-    echo "email : $email, password : $password";
+    $data = array("EMAIL" => $range["EMAIL"], "PASSWORD" => $range["PASSWORD"], "USERNAME" => $range["USERNAME"]);
+    echo json_encode($data);
     mysqli_free_result($result);
 } else {
     echo "NULL, NULL, 0, 0\n";
