@@ -1,8 +1,8 @@
 /**
  * @type {boolean}
- * keeps track of whether the user will try to connect or register when clicking the submit button
+ * keeps track of whether the user will try to login or register when clicking the submit button
  */
-var trying_to_connect = true;
+var trying_to_login = true;
 
 /**
  * toggles password on and off when button is clicked
@@ -17,19 +17,21 @@ function toggle_password() {
 }
 
 /**
- * toggles between `s'inscrire` and `se connecter`
+ * toggles between `register` and `login`
  */
-function toggle_inscrire_connecter() {
-    if(trying_to_connect) {
-        $("#register_connect_btn").attr("value","Connect ?");
-        $("#connect_register").html("Register : ");
+function toggle_register_login() {
+    if(trying_to_login) {
+        $("#register_login_btn").attr("value","login ?");
+        $("#login_register").html("Register : ");
         $("#login").attr("value","Register!");
-        trying_to_connect = false;
+        $(".email").attr("hidden",false);
+        trying_to_login = false;
     } else {
-        $("#register_connect_btn").attr("value","Register?");
-        $("#connect_register").html("Login : ");
+        $("#register_login_btn").attr("value","Register?");
+        $("#login_register").html("Login : ");
         $("#login").attr("value","Login!");
-        trying_to_connect = true;
+        $(".email").attr("hidden",true);
+        trying_to_login = true;
     }
 }
 

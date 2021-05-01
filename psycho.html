@@ -14,12 +14,12 @@
         <div class="container">
             <div class="row">
               <div class="col-5">
-                <h2 id="connect_register">Login :</h2>
+                <h2 id="login_register">Login :</h2>
               </div>
               <div class="col-4"></div>
               <div class="col-3">
-                <label for="register_connect_btn">
-                  <input type="button" class="btn btn-success float-right" id="register_connect_btn" value="Register" onclick="toggle_inscrire_connecter()">
+                <label for="register_login_btn">
+                  <input type="button" class="btn btn-success float-right" id="register_login_btn" value="Register" onclick="toggle_register_login()">
                 </label>
               </div>
             </div>
@@ -29,6 +29,11 @@
             Username <input type="text" class="form-control" id="username" name="username">
           </label>
           <br>
+          <label for="email">
+            <span hidden class="email">Email</span>
+            <input hidden type="email" class="form-control email" id="email" name="email">
+          </label>
+          <br hidden class="email">
           <label for="password">
             Password <input type="password" class="form-control" id="password" name="password">
           </label>
