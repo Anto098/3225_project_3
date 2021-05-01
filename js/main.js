@@ -54,8 +54,16 @@ function toggle_register_login_logout() {
         $("#login_register").html("Login : ");
         $("#login").attr("value","Login!");
         $("#username_div").attr("hidden",true);
+        $("#username").val("");
+        $("#login_message")
+            .val("")
+            .attr("hidden",true);
         trying_to_login = true;
     }
+    $("#email").val("");
+    $("#password").val("");
+
+
 }
 
 var email;      // email address entered by the user
@@ -64,32 +72,50 @@ var password;   // password entered by the user
  * Tells which function to execute whether we're trying to login or register
  */
 function register_or_login() {
+    email = $("#email").val();
+    let email_serialized = $("#email").serialize();
+    password = sha1($("#password").val());          // encoding password with SHA1
+    let password_serialized = "password="+password; // serializing by hand
     if(trying_to_login){
         console.log("trying to login");
-        email = $("#email").val();
-        let email_serialized = $("#email").serialize();
-        password = sha1($("#password").val());          // encoding password with SHA1
-        let password_serialized = "password="+password; // serializing by hand
-        $.post("../php/login.php",email_serialized+"&"+password_serialized, login);
-        $("#password").val("");
+        $.post("../php/login.php", email_serialized + "&" + password_serialized, login);
     } else {
-        // TODO get variables from html
+        let username_serialized = $("#username").serialize();
         console.log("trying to register");
-        $.post("login.php",email, register);
+        $.post("../php/register.php", email_serialized + "&" + password_serialized + "&" + username_serialized, register);
     }
+    $("#password").val("");
+
 }
 
 /**
  * Executes the procedure required to register a user
  */
-function register() {
+function register(data) {
     console.log("registering");
+    if(data == "USER CREATED"){
+        $("#login_message").text("The account was successfully created.");
+        toggle_register_login_logout();
+    } else {
+        $("#login_message")
+            .text("Email already in use.")
+            .attr("hidden",false);
+    }
+
 }
 
 /**
  * Executes the procedure required to login a user
  */
 function login(data) {
+    // check if email address is valid
+    let regex = new RegExp("is not a valid email address");
+    if (regex.test(data)) {
+        $("#login_message").text("Please enter a valid email address.");
+        return;
+    }
+
+    // check if email and password correspond to what's in the database
     data = JSON.parse(data);
     console.log(" user data : \nemail : "+email+", password : "+password+"\n");
     console.log(" server data : \nemail : "+data["EMAIL"]+", password : "+data["PASSWORD"]+"\n");
@@ -106,11 +132,8 @@ function login(data) {
         trying_to_logout = true;
         trying_to_login = false;
         $("#email").val("");
-
-
-
     } else {
-        console.log("user doesn't exist");
+        $("#login_message").text("Either the user doesn't exist or the password is incorrect.");
     }
 }
 
@@ -169,7 +192,7 @@ let app = $.sammy('body', function() {
     });
 
     this.post('#',function() {
-        // $('#login_message').text("Bienvenue " + this.params['email'] + ".");
+
     })
 
     this.after(function() {
