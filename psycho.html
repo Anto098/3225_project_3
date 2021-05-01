@@ -11,7 +11,19 @@
   <body>
 
       <div class="container bg-light" id="login_div">
-        <h2>Se connecter :</h2>
+        <div class="container">
+            <div class="row">
+              <div class="col-5">
+                <h2 id="connect_register">Login :</h2>
+              </div>
+              <div class="col-4"></div>
+              <div class="col-3">
+                <label for="register_connect_btn">
+                  <input type="button" class="btn btn-success float-right" id="register_connect_btn" value="Register" onclick="toggle_inscrire_connecter()">
+                </label>
+              </div>
+            </div>
+        </div>
         <form action="#" method="post">
           <label for="username">
             Username <input type="text" class="form-control" id="username" name="username">
@@ -26,9 +38,12 @@
           </label>
           <br>
           <label for="login">
-            <input type="submit" class="btn btn-primary" id="login" value="Login">
+            <input type="submit" class="btn btn-primary float-left" id="login" value="Login">
           </label>
         </form>
+
+
+
         <p id="login_message"></p>
       </div>
 
