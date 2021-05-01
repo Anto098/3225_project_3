@@ -104,7 +104,7 @@ function next_page() {
 /**
  * gets next 10 cues in table
  */
-function update_table {
+function update_table (){
     function reqListener () {
         console.log(this.responseText);
     }
