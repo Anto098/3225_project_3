@@ -21,7 +21,7 @@ let app = $.sammy('body', function() {
 
     this.post('#',function(){
         $('#login_message').text("Bienvenue " + this.params['username'] + ".");
-    });
+    })
 
     this.after(function() {
         let info_path = '/psycho.html#/info/';
@@ -32,7 +32,7 @@ let app = $.sammy('body', function() {
             // If we get here it means that we just used an info/:word route.
             let word = path.substring(regex.exec(path).index + info_path.length, path.length)
             console.log(word)
-        };
+        }
 
     })
 
