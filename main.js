@@ -21,17 +21,57 @@ function toggle_password() {
  */
 function toggle_register_login() {
     if(trying_to_login) {
-        $("#register_login_btn").attr("value","login ?");
+        $("#register_login_btn").attr("value","Login?");
         $("#login_register").html("Register : ");
         $("#login").attr("value","Register!");
-        $(".email").attr("hidden",false);
+        $("#username_div").attr("hidden",false);
         trying_to_login = false;
     } else {
         $("#register_login_btn").attr("value","Register?");
         $("#login_register").html("Login : ");
         $("#login").attr("value","Login!");
-        $(".email").attr("hidden",true);
+        $("#username_div").attr("hidden",true);
         trying_to_login = true;
+    }
+}
+
+var email; // email address entered by the user
+/**
+ * Tells which function to execute whether we're trying to login or register
+ */
+function register_or_login() {
+    if(trying_to_login){
+        console.log("trying to login");
+        email = $("#email").val();
+        var email_serialized = $("#email").serialize();
+        console.log("email : "+email);
+        console.log("email_serialized : "+email_serialized);
+        $.get("login.php",email_serialized, login);
+    } else {
+        // TODO get variables from html
+        console.log("trying to register");
+        $.get("login.php",email, register);
+    }
+}
+
+/**
+ * Executes the procedure required to register a user
+ */
+function register() {
+    console.log("registering");
+}
+
+/**
+ * Executes the procedure required to login a user
+ */
+function login(data) {
+    console.log("data : \n\n"+data);
+    if(data==email){
+        console.log("data : "+data+" email : "+email);
+        console.log("user exists");
+    } else {
+        console.log("data : "+data+" email : "+email);
+        console.log("user doesn't exist");
     }
 }
 
@@ -44,7 +84,7 @@ let app = $.sammy('body', function() {
     });
 
     this.post('#',function() {
-        $('#login_message').text("Bienvenue " + this.params['username'] + ".");
+        $('#login_message').text("Bienvenue " + this.params['email'] + ".");
     })
 
     this.after(function() {
