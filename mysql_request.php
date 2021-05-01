@@ -1,5 +1,5 @@
 <?php
-// les champs de la base sont connus
+
 include("config-freq.php");
 include("opendb-diro.php");
 $result = mysqli_query($conn, "SELECT * FROM " . $db_table . " LIMIT 5;");

@@ -1,3 +1,12 @@
+const ROW_COUNT = 0;
+const MAX_OFFSET = ROW_COUNT / 10;
+
+/**
+ * @type {int}
+ * keeps track of current page
+ */
+var offset = 0;
+
 /**
  * @type {boolean}
  * keeps track of whether the user will try to connect or register when clicking the submit button
@@ -31,6 +40,52 @@ function toggle_inscrire_connecter() {
         $("#login").attr("value","Login!");
         trying_to_connect = true;
     }
+}
+
+/**
+ * gets previous 10 cues in table
+ */
+function previous_page() {
+    if(offset > 0) {
+        offset -= 10;
+    }
+}
+
+/**
+ * gets next 10 cues in table
+ */
+function next_page() {
+    if(offset < MAX_OFFSET) {
+        offset += 10;
+    }
+}
+
+/**
+ * gets next 10 cues in table
+ */
+function update_table {
+    function reqListener () {
+        console.log(this.responseText);
+    }
+
+    let req = new XMLHttpRequest();
+    req.onload = function() {
+        for (let i = 0; i < req.length; i++) {
+            let row = $("#row-"+i);
+            for(let j = 1; j <= req[i].length; j++) {
+                if(j == 1) {
+                    $(row+":nth-child("+j+"):first-child").attr("href", "#/info/"+req[i][j]);
+                    $(row+":nth-child("+j+"):first-child").innerHTML(req[i][j]);
+                }
+                else {
+                    $(row+":nth-child("+j+")").innerHTML(req[i][j]);
+                }
+            }
+        }
+        alert(this.responseText);
+    }
+    req.open("get", "paging.php", true);
+    req.send();
 }
 
 /**
