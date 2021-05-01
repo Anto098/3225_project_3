@@ -13,7 +13,7 @@ if ($range = mysqli_fetch_assoc($result)) {
     var_dump($range);
     echo "EMAIL TAKEN";
 } else {
-    $user_creation = mysqli_query($conn, "INSERT INTO $db_table(EMAIL,USERNAME,PASSWORD) VALUES ('$db_email','$db_username',SHA1('$db_password'));");
+    $user_creation = mysqli_query($conn, "INSERT INTO $db_table(EMAIL,USERNAME,PASSWORD) VALUES ('$db_email','$db_username','$db_password');");
     echo "USER CREATED";
 }
 include("closedb_diro.php");

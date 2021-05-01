@@ -55,11 +55,11 @@ function toggle_register_login_logout() {
         $("#login").attr("value","Login!");
         $("#username_div").attr("hidden",true);
         $("#username").val("");
-        $("#login_message")
-            .val("")
-            .attr("hidden",true);
         trying_to_login = true;
     }
+    $("#login_message")
+        .val("")
+        .attr("hidden",true);
     $("#email").val("");
     $("#password").val("");
 
@@ -71,7 +71,7 @@ var password;   // password entered by the user
 /**
  * Tells which function to execute whether we're trying to login or register
  */
-function register_or_login() {
+/*function register_or_login() {
     email = $("#email").val();
     let email_serialized = $("#email").serialize();
     password = sha1($("#password").val());          // encoding password with SHA1
@@ -86,7 +86,7 @@ function register_or_login() {
     }
     $("#password").val("");
 
-}
+}*/
 
 /**
  * Executes the procedure required to register a user
@@ -94,8 +94,10 @@ function register_or_login() {
 function register(data) {
     console.log("registering");
     if(data == "USER CREATED"){
-        $("#login_message").text("The account was successfully created.");
         toggle_register_login_logout();
+        $("#login_message")
+            .text("The account was successfully created.")
+            .attr("hidden",false);
     } else {
         $("#login_message")
             .text("Email already in use.")
@@ -192,7 +194,19 @@ let app = $.sammy('body', function() {
     });
 
     this.post('#',function() {
-
+        email = $("#email").val();
+        let email_serialized = $("#email").serialize();
+        password = sha1($("#password").val());          // encoding password with SHA1
+        let password_serialized = "password="+password; // serializing by hand
+        if(trying_to_login){
+            console.log("trying to login");
+            $.post("../php/login.php", email_serialized + "&" + password_serialized, login);
+        } else {
+            let username_serialized = $("#username").serialize();
+            console.log("trying to register");
+            $.post("../php/register.php", email_serialized + "&" + password_serialized + "&" + username_serialized, register);
+        }
+        $("#password").val("");
     })
 
     this.after(function() {
