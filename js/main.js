@@ -56,7 +56,7 @@ function register_or_login() {
         let email_serialized = $("#email").serialize();
         password = sha1($("#password").val());
         let password_serialized = "password="+password;
-        $.get("login.php",email_serialized+"&"+password_serialized, login);
+        $.get("../php/login.php",email_serialized+"&"+password_serialized, login);
     } else {
         // TODO get variables from html
         console.log("trying to register");
