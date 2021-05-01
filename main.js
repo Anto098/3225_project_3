@@ -1,11 +1,11 @@
-const ROW_COUNT = 0;
-const MAX_OFFSET = ROW_COUNT / 10;
+const ROW_COUNT = 14;
+const MAX_OFFSET = (ROW_COUNT / 10) * 10;
 
 /**
  * @type {int}
  * keeps track of current page
  */
-var offset = 0;
+var current_offset = 0;
 
 /**
  * @type {boolean}
@@ -26,66 +26,31 @@ function toggle_password() {
 }
 
 /**
- * toggles between `s'inscrire` and `se connecter`
- */
-function toggle_inscrire_connecter() {
-    if(trying_to_connect) {
-        $("#register_connect_btn").attr("value","Connect ?");
-        $("#connect_register").html("Register : ");
-        $("#login").attr("value","Register!");
-        trying_to_connect = false;
-    } else {
-        $("#register_connect_btn").attr("value","Register?");
-        $("#connect_register").html("Login : ");
-        $("#login").attr("value","Login!");
-        trying_to_connect = true;
-    }
-}
-
-/**
  * gets previous 10 cues in table
  */
 function previous_page() {
-    if(offset > 0) {
-        offset -= 10;
+    if(current_offset > 0) {
+        current_offset -= 10;
     }
+    let test;
+    $.get('../paging.php', current_offset, function(data) {
+        console.log(JSON.parse(data));
+    });
 }
 
 /**
  * gets next 10 cues in table
  */
 function next_page() {
-    if(offset < MAX_OFFSET) {
-        offset += 10;
+    if(current_offset < MAX_OFFSET) {
+        current_offset += 10;
     }
-}
-
-/**
- * gets next 10 cues in table
- */
-function update_table {
-    function reqListener () {
-        console.log(this.responseText);
-    }
-
-    let req = new XMLHttpRequest();
-    req.onload = function() {
-        for (let i = 0; i < req.length; i++) {
-            let row = $("#row-"+i);
-            for(let j = 1; j <= req[i].length; j++) {
-                if(j == 1) {
-                    $(row+":nth-child("+j+"):first-child").attr("href", "#/info/"+req[i][j]);
-                    $(row+":nth-child("+j+"):first-child").innerHTML(req[i][j]);
-                }
-                else {
-                    $(row+":nth-child("+j+")").innerHTML(req[i][j]);
-                }
-            }
-        }
-        alert(this.responseText);
-    }
-    req.open("get", "paging.php", true);
-    req.send();
+    let test;
+    let offset = "offset="+current_offset;
+    console.log("allo");
+    $.get('./paging.php',offset,function(data) {
+        console.log(JSON.parse(data));
+    });
 }
 
 /**
@@ -93,7 +58,11 @@ function update_table {
  */
 let app = $.sammy('body', function() {
     this.get("", function() {
-        console.log("empty route")
+        console.log("empty route");
+    });
+
+    this.get("#/cue", function() {
+        console.log("test");
     });
 
     this.post('#',function() {

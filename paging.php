@@ -1,22 +1,20 @@
 <?php
 
-$offset = 0;
-$rows = array();
-
 include("config-freq.php");
 include("opendb-diro.php");
-$result = mysqli_query($conn, "SELECT * FROM " . $db_table . " LIMIT $offset, 10;");
+$offset = $_REQUEST["current_offset"];
+
+$result = mysqli_query($conn, "SELECT CUE,TARGET,MSG FROM "
+    . $db_name . "." . $db_table . " LIMIT " . "'$offset'" . ", 10;");
+
+$return = array();
 
 while ($row = mysqli_fetch_assoc($result)) {
-    $columns = array();
-    $cue = $row['CUE'];
-    $target = $row['TARGET'];
-    $msg = $row['MSG'];
-    array_push($columns, $cue, $target, $msg);
-    array_push($rows, $columns);
+    $column = array('cue' => $result['CUE'], 'target' => $result['TARGET'], 'msg' => $result['MSG']);
+    array_push($return, $column);
 }
 
-echo json_encode($rows);
+echo json_encode($return);
 
 mysqli_free_result($result);
 include('closedb-diro.php');
