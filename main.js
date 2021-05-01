@@ -65,12 +65,10 @@ function register() {
  * Executes the procedure required to login a user
  */
 function login(data) {
-    console.log("data : \n\n"+data);
+    console.log("data : "+data+" email : "+email);
     if(data==email){
-        console.log("data : "+data+" email : "+email);
         console.log("user exists");
     } else {
-        console.log("data : "+data+" email : "+email);
         console.log("user doesn't exist");
     }
 }
