@@ -105,7 +105,9 @@ function register(data) {
  * Executes the procedure required to login a user
  */
 function login(data) {
+    console.log(data)
     // check if email address is valid
+
     let regex = new RegExp("is not a valid email address");
     if (regex.test(data)) {
         $("#login_message").text("Please enter a valid email address.");
@@ -271,6 +273,7 @@ let app = $.sammy('body', function() {
         let email_serialized = $("#email").serialize();
         password = sha1($("#password").val());          // encoding password with SHA1
         let password_serialized = "password="+password; // serializing by hand
+
         if(trying_to_login){
             console.log("trying to login");
             $.post("../php/sql_login.php", email_serialized + "&" + password_serialized, login);
@@ -286,7 +289,6 @@ let app = $.sammy('body', function() {
         let info_path = '/psycho.html#/info/';
         let regex = new RegExp(info_path);
         let path = this.path;
-
 
         if (regex.test(path)) {
             // If we get here it means that we just used an info/:word route.

@@ -3,9 +3,9 @@
 $offset = 0;
 $rows = array();
 
-include("config-freq.php");
-include("opendb-diro.php");
-$result = mysqli_query($conn, "SELECT * FROM " . $db_table . " LIMIT $offset, 10;");
+include("config.php");
+include("opendb_diro.php");
+$result = mysqli_query($conn, "SELECT * FROM " . $db_table_usf_fan . " LIMIT $offset, 10;");
 
 while ($row = mysqli_fetch_assoc($result)) {
     $columns = array();
@@ -19,4 +19,4 @@ while ($row = mysqli_fetch_assoc($result)) {
 echo json_encode($rows);
 
 mysqli_free_result($result);
-include('closedb-diro.php');
+include('closedb_diro.php');

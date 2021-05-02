@@ -1,7 +1,7 @@
 <?php
 
 // les champs de la base sont connus
-include("config_usf_fan.php");
+include("config.php");
 include("opendb_diro.php");
 
 $word = $_REQUEST['word'];
@@ -10,7 +10,8 @@ if (!ctype_alpha($word)) {  // If the word is not made uniquely of letters, we d
     die("Mot invalide");
 }
 
-$result = mysqli_query($conn, "SELECT * FROM $db_table WHERE CUE='$word' ORDER BY MSG DESC");
+$result = mysqli_query($conn, "SELECT * FROM $db_table_usf_fan WHERE CUE='$word' ORDER BY MSG DESC");
+
 
 $data_array = array();
 while ($range = mysqli_fetch_assoc($result)) {
