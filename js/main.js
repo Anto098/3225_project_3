@@ -150,6 +150,10 @@ function calculate_score() {
 
 }
 
+function get_cue(data) {
+    console.log("data : \n"+data);
+}
+
 ////////// END GAME LOGIC //////////
 
 /**
@@ -200,8 +204,10 @@ function update_table (){
 
 
 
-var email;      // email address entered by the user
-var password;   // password entered by the user
+var email;      // LOGIN LOGIC : email address entered by the user
+var password;   // LOGIN LOGIC : password entered by the user
+var time;       // GAME LOGIC : time to play the game entered by the user
+var cue;        // GAME LOGIC : cue entered by the user
 /**
  * Hides the word info histogram div (by default we show word info in the table div), and adds some event listeners.
  */
@@ -261,12 +267,12 @@ function display_word_info_as_histogram() {
 /**
  * Sammy application logic. Manages functions associated with routes.
  */
-let app = $.sammy('body', function() {
+let app = $.sammy("body", function() {
     this.get("", function() {
         console.log("empty route")
     });
 
-    this.post('#',function() {
+    this.post("#",function() {
         // Login/Register Route
         // Tells which function to execute whether we're trying to login or register
         email = $("#email").val();
@@ -283,6 +289,17 @@ let app = $.sammy('body', function() {
             $.post("../php/sql_register.php", email_serialized + "&" + password_serialized + "&" + username_serialized, register);
         }
         $("#password").val("");
+    })
+
+    this.post("#/game",function(){
+        console.log("je passe dans sammy #/game")
+        time = $("#time").value;
+        let time_serialized = $("#time").serialize();
+        cue = $("#cue").val();
+        let cue_serialized = "cue="+cue;
+        console.log("time_serialized : "+time_serialized+", cue_serialized :"+cue_serialized);
+        console.log("Trying to start game.");
+        $.get("../php/get_cue.php",cue_serialized,get_cue);
     })
 
     this.after(function() {
