@@ -1,22 +1,18 @@
 <?php
 
-$offset = 0;
-$rows = array();
-
 include("config.php");
 include("opendb_diro.php");
-$result = mysqli_query($conn, "SELECT * FROM " . $db_table_usf_fan . " LIMIT $offset, 10;");
+$offset = $_REQUEST["offset"];
+
+$result = mysqli_query($conn, "SELECT CUE AS '0', TARGET AS '1', MSG AS '2' FROM $db_name.$db_table LIMIT $offset, 10");
+
+$return = array();
 
 while ($row = mysqli_fetch_assoc($result)) {
-    $columns = array();
-    $cue = $row['CUE'];
-    $target = $row['TARGET'];
-    $msg = $row['MSG'];
-    array_push($columns, $cue, $target, $msg);
-    array_push($rows, $columns);
+    array_push($return, $row);
 }
 
-echo json_encode($rows);
+echo json_encode($return);
 
 mysqli_free_result($result);
 include('closedb_diro.php');
