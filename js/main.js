@@ -97,14 +97,14 @@ function toggle_register_login_logout() {
 function register(data) {
     console.log("data : \n"+data);
     data = JSON.parse(data);
-    console.log(" user data : \nemail : "+email_value+", password : "+password+"\n");
-    console.log(" server data : \nemail : "+data["EMAIL"]+", password : "+data["PASSWORD"]+"\n");
-    if(data["EMAIL"]==email || data["USERNAME"]==username) {
+    console.log(" user data : \nemail : "+email_value+", username : "+username+"\n");
+    console.log(" server data : \nemail : "+data["EMAIL"]+", username : "+data["USERNAME"]+"\n");
+    if(data["EMAIL"]===email_value || data["USERNAME"]===username) {
         $("#login_message")
-            .text("Email already in use.")
+            .text("Email or Username already in use.")
             .attr("hidden",false);
     } else {
-        toggle_register_login_logout();
+        // toggle_register_login_logout();
         $("#login_message")
             .text("The account was successfully created.")
             .attr("hidden",false);
@@ -127,11 +127,13 @@ function login(data) {
     data = JSON.parse(data);
     console.log(" user data : \nemail : "+email_value+", password : "+password+"\n");
     console.log(" server data : \nemail : "+data["EMAIL"]+", password : "+data["PASSWORD"]+"\n");
-    if(data["EMAIL"] == email_value && data["PASSWORD"] == password) {
+    if(data["EMAIL"] === email_value && data["PASSWORD"] === password) {
         console.log("user exists");
         $("#login_form").attr("hidden",true);
         $("#login_register").html("Login successful!");
-        $('#login_message').text("Bienvenue " + data["USERNAME"] + ".");
+        $('#login_message')
+            .text("Bienvenue " + data["USERNAME"] + ".")
+            .removeAttr("hidden");
         $("#register_login_btn")
             .attr("id","logout_btn")
             .removeClass("btn-success")
@@ -181,7 +183,7 @@ function manage_user_input(){
  */
 function check_user_input(input){
     for(i in game_data) {
-        if(game_data[i]["TARGET"] == input) {
+        if(game_data[i]["TARGET"] === input) {
             return true;
         }
     }
@@ -200,7 +202,7 @@ function store_user_input(input,isTarget) {
         calculate_score(input);
         input = "<span style='color:blue'>"+input+"</span>";
     }
-    if(user_input_p.html().length == 0 ){
+    if(user_input_p.html().length === 0 ){
         user_input_p.html(input);
     } else {
         user_input_p.html(user_input_p.html()+", "+input);
@@ -213,7 +215,7 @@ function store_user_input(input,isTarget) {
  */
 function calculate_score(input) {
     for(i in game_data){
-        if(input == game_data[i]["TARGET"]) {
+        if(input === game_data[i]["TARGET"]) {
             score_sum += parseFloat(game_data[i]["MSG"]);
         }
     }
@@ -225,7 +227,7 @@ function calculate_score(input) {
  */
 function play_game(data) {
     game_data = JSON.parse(data);
-    if(game_data.length == 0) { // if invalid cue, ask player to enter another one
+    if(game_data.length === 0) { // if invalid cue, ask player to enter another one
         $("#game_message_p")
             .text("Your cue did not yield any result, please try another one.")
             .attr("hidden",false);
@@ -333,7 +335,7 @@ function update_table(data) {
     let row = "row-";
     for(let i = 0; i < 10; i++) {
         for(let j = 0; j < 3; j++) {
-            if(j == 0) {
+            if(j === 0) {
                 document.getElementById(row+i).getElementsByTagName('div')[j]
                     .getElementsByTagName('a')[j].setAttribute("href", "");
                 document.getElementById(row+i).getElementsByTagName('div')[j]
@@ -346,7 +348,7 @@ function update_table(data) {
     }
     for(let i = 0; i < Math.min(10, ROW_COUNT - current_offset); i++) {
         for(let j = 0; j < 3; j++) {
-            if(j == 0) {
+            if(j === 0) {
                 document.getElementById(row+i).getElementsByTagName('div')[j]
                     .getElementsByTagName('a')[j].setAttribute("href", "#/info/"+data[i][j]);
                 document.getElementById(row+i).getElementsByTagName('div')[j]
@@ -429,7 +431,7 @@ function display_word_info_as_histogram() {
  * @returns {number}
  */
 function get_word_max_msg() {
-    if (word_info == null) {
+    if (word_info === null) {
         return 1;
     }
 
@@ -530,7 +532,7 @@ let app = $.sammy("body", function() {
             console.log("trying to login");
             $.post("../php/sql_login.php", email_serialized + "&" + password_serialized, login);
         } else {
-            let username = $("#username").val();
+            username = $("#username").val();
             let username_serialized = $("#username").serialize();
             console.log("trying to register");
             $.post("../php/sql_register.php", email_serialized + "&" + password_serialized + "&" + username_serialized, register);
