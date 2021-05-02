@@ -1,7 +1,7 @@
 <?php
 
 // les champs de la base sont connus
-include("config_cue.php");
+include("config.php");
 include("opendb_diro.php");
 $db_cue = $_REQUEST["cue"];
 echo "db_cue : $db_cue";
