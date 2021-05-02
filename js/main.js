@@ -1,3 +1,6 @@
+
+////////// GLOBAL VARIABLES //////////
+
 const ROW_COUNT = 0;
 const MAX_OFFSET = ROW_COUNT / 10;
 
@@ -7,7 +10,12 @@ const MAX_OFFSET = ROW_COUNT / 10;
  */
 var offset = 0;
 
-////////// LOGIN LOGIC //////////
+
+var user_input = [];
+var email;      // LOGIN LOGIC : email address entered by the user
+var password;   // LOGIN LOGIC : password entered by the user
+var time;       // GAME LOGIC : time to play the game entered by the user
+var cue;        // GAME LOGIC : cue entered by the user
 
 /**
  * @type {boolean}
@@ -33,7 +41,9 @@ var is_word_info_as_table = true;
  */
 var word_info = null;
 
+////////// END GLOBAL VARIABLES //////////
 
+////////// LOGIN LOGIC //////////
 
 /**
  * toggles password on and off when button is clicked
@@ -140,8 +150,6 @@ function login(data) {
 
 ////////// GAME LOGIC //////////
 
-var user_input = [];
-
 function store_user_input(input) {
     user_input.push(input);
 }
@@ -156,6 +164,7 @@ function get_cue(data) {
 
 ////////// END GAME LOGIC //////////
 
+////////// CUE TABLE LOGIC //////////
 /**
  * gets previous 10 cues in table
  */
@@ -201,13 +210,10 @@ function update_table (){
     req.open("get", "sql_paging.php", true);
     req.send();
 }
+////////// END CUE TABLE LOGIC //////////
 
 
-
-var email;      // LOGIN LOGIC : email address entered by the user
-var password;   // LOGIN LOGIC : password entered by the user
-var time;       // GAME LOGIC : time to play the game entered by the user
-var cue;        // GAME LOGIC : cue entered by the user
+////////// WORD INFO LOGIC //////////
 /**
  * Hides the word info histogram div (by default we show word info in the table div), and adds some event listeners.
  */
@@ -231,12 +237,10 @@ function setup_word_info() {
  */
 function display_word_info_as_table() {
     if(word_info != null) {
-        let target_number = word_info.length;
-
         let table = $("#word_info_as_table");
         table.empty();
 
-        for (let i=0; i<target_number; i++) {
+        for (let i=0; i<word_info.length; i++) {
             let row = $(document.createElement("div"));
             row.addClass("row");
             row.append("<div class='col-4'></div><div class='col-4'></div><div class='col-4'></div>");
@@ -245,7 +249,7 @@ function display_word_info_as_table() {
 
 
         let word_info_array = []
-        for (let j=0; j<target_number; j++) {
+        for (let j=0; j<word_info.length; j++) {
             word_info_array.push(word_info[j].word, word_info[j].targetword, word_info[j].msg)
         }
 
@@ -273,11 +277,35 @@ function display_word_info_as_histogram() {
     }
 }
 
+/**
+ * Returns the msg max value in the global json variable word_info.
+ * @returns {number}
+ */
+function get_word_max_msg() {
+    if (word_info == null) {
+        return 1;
+    }
+
+    let max_msg = 0;
+    for (let i=0; i<word_info.length; i++) {
+        if (word_info[i].msg > max_msg) {
+            max_msg = word_info[i].msg;
+        }
+    }
+
+    return max_msg;
+}
+
+/**
+ * Displays a circular histogram of the word info.
+ */
 function circular_histogram() {
+    let max_msg = get_word_max_msg();
+
     // set the dimensions and margins of the graph
-    var margin = {top: 100, right: 0, bottom: 0, left: 0},
-        width = 700 - margin.left - margin.right,
-        height = 700 - margin.top - margin.bottom,
+    var margin = {top: 100, right: 100, bottom: 100, left: 100},
+        width = 600 - margin.left - margin.right,
+        height = 600 - margin.top - margin.bottom,
         innerRadius = 90,
         outerRadius = Math.min(width, height) / 2;   // the outerRadius goes from the middle of the SVG area to the border
 
@@ -296,7 +324,7 @@ function circular_histogram() {
         .domain(word_info.map(function(d) { return d.targetword; })); // The domain of the X axis is the list of states.
     var y = d3.scaleRadial()
         .range([innerRadius, outerRadius])   // Domain will be define later.
-        .domain([0, 1]); // Domain of Y is from 0 to the max seen in the data
+        .domain([0, max_msg]); // Domain of Y is from 0 to the max seen in the data
 
     // Add the bars
     svg.append("g")
@@ -324,11 +352,15 @@ function circular_histogram() {
         .append("text")
         .text(function(d){return(d.targetword)})
         .attr("transform", function(d) { return (x(d.targetword) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)"; })
-        .style("font-size", "11px")
+        .style("font-size", "13px")
         .attr("alignment-baseline", "middle")
 
 }
 
+////////// END WORD INFO LOGIC //////////
+
+
+////////// APP LOGIC //////////
 /**
  * Sammy application logic. Manages functions associated with routes.
  */
@@ -392,4 +424,4 @@ function main() {
     app.run();
     setup_word_info()
 }
-
+////////// END APP LOGIC //////////
