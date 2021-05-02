@@ -4,7 +4,7 @@ include("config.php");
 include("opendb_diro.php");
 $offset = $_REQUEST["offset"];
 
-$result = mysqli_query($conn, "SELECT CUE AS '0', TARGET AS '1', MSG AS '2' FROM $db_name.$db_table LIMIT $offset, 10");
+$result = mysqli_query($conn, "SELECT CUE AS '0', TARGET AS '1', MSG AS '2' FROM $db_name.$db_table_usf_fan LIMIT $offset, 10");
 
 $return = array();
 

@@ -1,5 +1,5 @@
 ////////// GLOBAL VARIABLES //////////
-const ROW_COUNT = 13;
+const ROW_COUNT = 21870;
 const MAX_OFFSET = Math.floor(ROW_COUNT / 10) * 10;
 
 /**
@@ -171,7 +171,7 @@ function previous_page() {
         current_offset -= 10;
     }
     let offset = "offset="+current_offset;
-    $.post('./paging.php',offset,update_table);
+    $.post('../php/sql_paging.php',offset,update_table);
 }
 
 /**
@@ -182,13 +182,14 @@ function next_page() {
         current_offset += 10;
     }
     let offset = "offset="+current_offset;
-    $.post('./paging.php',offset,update_table);
+    $.post('../php/sql_paging.php',offset,update_table);
 }
 
 /**
  * gets next 10 cues in table
  */
 function update_table(data) {
+    console.log(data)
     data = JSON.parse(data);
     console.log(data[0]['0']);
     let row = "row-";
@@ -431,6 +432,7 @@ let app = $.sammy("body", function() {
  */
 function main() {
     app.run();
-    setup_word_info()
+    setup_word_info();
+    previous_page();
 }
 ////////// END APP LOGIC //////////
