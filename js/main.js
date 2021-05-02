@@ -7,6 +7,8 @@ const MAX_OFFSET = ROW_COUNT / 10;
  */
 var offset = 0;
 
+////////// LOGIN LOGIC //////////
+
 /**
  * @type {boolean}
  * keeps track of whether the user will try to login or register when clicking the submit button
@@ -66,28 +68,6 @@ function toggle_register_login_logout() {
 
 }
 
-var email;      // email address entered by the user
-var password;   // password entered by the user
-/**
- * Tells which function to execute whether we're trying to login or register
- */
-/*function register_or_login() {
-    email = $("#email").val();
-    let email_serialized = $("#email").serialize();
-    password = sha1($("#password").val());          // encoding password with SHA1
-    let password_serialized = "password="+password; // serializing by hand
-    if(trying_to_login){
-        console.log("trying to login");
-        $.post("../php/login.php", email_serialized + "&" + password_serialized, login);
-    } else {
-        let username_serialized = $("#username").serialize();
-        console.log("trying to register");
-        $.post("../php/register.php", email_serialized + "&" + password_serialized + "&" + username_serialized, register);
-    }
-    $("#password").val("");
-
-}*/
-
 /**
  * Executes the procedure required to register a user
  */
@@ -139,6 +119,22 @@ function login(data) {
     }
 }
 
+////////// END LOGIN LOGIC //////////
+
+////////// GAME LOGIC //////////
+
+var user_input = [];
+
+function store_user_input(input) {
+    user_input.push(input);
+}
+
+function calculate_score() {
+
+}
+
+////////// END GAME LOGIC //////////
+
 /**
  * gets previous 10 cues in table
  */
@@ -185,6 +181,10 @@ function update_table (){
     req.send();
 }
 
+
+
+var email;      // email address entered by the user
+var password;   // password entered by the user
 /**
  * Sammy application logic. Manages functions associated with routes.
  */
@@ -194,6 +194,8 @@ let app = $.sammy('body', function() {
     });
 
     this.post('#',function() {
+        // Login/Register Route
+        // Tells which function to execute whether we're trying to login or register
         email = $("#email").val();
         let email_serialized = $("#email").serialize();
         password = sha1($("#password").val());          // encoding password with SHA1

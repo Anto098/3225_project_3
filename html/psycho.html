@@ -52,6 +52,7 @@
           </label>
         </form>
         <p id="login_message"></p>
+        <br>
       </div>
 
       <div class="container bg-light" id="cue_div">
@@ -181,6 +182,28 @@
           <input type="submit" class="btn btn-primary" id="previous" value="Previous" onclick="previous_page()">
           <input type="submit" class="btn btn-primary" id="next" value="Next" onclick="next_page()">
         </form>
+        <br>
+      </div>
+
+      <div class="container bg-light" id="game_div">
+        <h1>Game</h1>
+        <form action="#/game">
+          <label for="time">
+            Time :
+            <input id="time" class="form-control" name="time" type="number" min="5" max="120" value="60">
+          </label>
+          <br>
+          <label for="cue">
+            Cue :
+            <input id="cue" class="form-control" name="cue" type="text" placeholder="Enter a cue here">
+          </label>
+          <br>
+          <label for="start_game">
+            <input type="submit" id="start_game" class="btn btn-success" value="Start!">
+          </label>
+        </form>
+
+        <input type="text" id="user_input" class="form-control" onclick="store_user_input()">
       </div>
 
   <script src="../js/main.js"></script>
