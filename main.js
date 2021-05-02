@@ -1,5 +1,5 @@
-const ROW_COUNT = 14;
-const MAX_OFFSET = (ROW_COUNT / 10) * 10;
+const ROW_COUNT = 13;
+const MAX_OFFSET = Math.floor(ROW_COUNT / 10) * 10;
 
 /**
  * @type {int}
@@ -32,10 +32,8 @@ function previous_page() {
     if(current_offset > 0) {
         current_offset -= 10;
     }
-    let test;
-    $.get('../paging.php', current_offset, function(data) {
-        console.log(JSON.parse(data));
-    });
+    let offset = "offset="+current_offset;
+    $.post('./paging.php',offset,update_table);
 }
 
 /**
@@ -45,12 +43,40 @@ function next_page() {
     if(current_offset < MAX_OFFSET) {
         current_offset += 10;
     }
-    let test;
     let offset = "offset="+current_offset;
-    console.log("allo");
-    $.get('./paging.php',offset,function(data) {
-        console.log(JSON.parse(data));
-    });
+    $.post('./paging.php',offset,update_table);
+}
+
+function update_table(data) {
+    data = JSON.parse(data);
+    console.log(data[0]['0']);
+    let row = "row-";
+    for(let i = 0; i < 10; i++) {
+        for(let j = 0; j < 3; j++) {
+            if(j == 0) {
+                document.getElementById(row+i).getElementsByTagName('div')[j]
+                    .getElementsByTagName('a')[j].setAttribute("href", "");
+                document.getElementById(row+i).getElementsByTagName('div')[j]
+                    .getElementsByTagName('a')[j].textContent = "";
+            }
+            else {
+                document.getElementById(row+i).getElementsByTagName('div')[j].textContent = "";
+            }
+        }
+    }
+    for(let i = 0; i < Math.min(10, ROW_COUNT - current_offset); i++) {
+        for(let j = 0; j < 3; j++) {
+            if(j == 0) {
+                document.getElementById(row+i).getElementsByTagName('div')[j]
+                    .getElementsByTagName('a')[j].setAttribute("href", "#/info/"+data[i][j]);
+                document.getElementById(row+i).getElementsByTagName('div')[j]
+                    .getElementsByTagName('a')[j].textContent = data[i][j];
+            }
+            else {
+                document.getElementById(row+i).getElementsByTagName('div')[j].textContent = data[i][j];
+            }
+        }
+    }
 }
 
 /**
@@ -59,10 +85,6 @@ function next_page() {
 let app = $.sammy('body', function() {
     this.get("", function() {
         console.log("empty route");
-    });
-
-    this.get("#/cue", function() {
-        console.log("test");
     });
 
     this.post('#',function() {
