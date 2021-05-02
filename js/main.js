@@ -45,7 +45,7 @@ var word_info = null;
  */
 function toggle_password() {
     let x = $("#password");
-    if (x.attr("type") === "password") {
+    if(x.attr("type") === "password") {
         x.attr("type","text");
     } else {
         x.attr("type","password");
@@ -56,7 +56,7 @@ function toggle_password() {
  * toggles between `register` and `login`
  */
 function toggle_register_login_logout() {
-    if(trying_to_logout){
+    if(trying_to_logout) {
         $("#logout_btn")
             .attr("id","register_login_btn")
             .removeClass("btn-danger")
@@ -97,7 +97,7 @@ function register(data) {
     data = JSON.parse(data);
     console.log(" user data : \nemail : "+email+", password : "+password+"\n");
     console.log(" server data : \nemail : "+data["EMAIL"]+", password : "+data["PASSWORD"]+"\n");
-    if(data["EMAIL"]==email || data["USERNAME"]==username){
+    if(data["EMAIL"]==email || data["USERNAME"]==username) {
         $("#login_message")
             .text("Email already in use.")
             .attr("hidden",false);
@@ -116,7 +116,7 @@ function register(data) {
 function login(data) {
     // check if email address is valid
     let regex = new RegExp("is not a valid email address");
-    if (regex.test(data)) {
+    if(regex.test(data)) {
         $("#login_message").text("Please enter a valid email address.");
         return;
     }
@@ -125,7 +125,7 @@ function login(data) {
     data = JSON.parse(data);
     console.log(" user data : \nemail : "+email+", password : "+password+"\n");
     console.log(" server data : \nemail : "+data["EMAIL"]+", password : "+data["PASSWORD"]+"\n");
-    if(data["EMAIL"]==email && data["PASSWORD"]==password){
+    if(data["EMAIL"]==email && data["PASSWORD"]==password) {
         console.log("user exists");
         $("#login_form").attr("hidden",true);
         $("#login_register").html("Login successful!");
@@ -147,17 +147,120 @@ function login(data) {
 
 ////////// GAME LOGIC //////////
 
-function store_user_input(input) {
-    user_input.push(input);
+/**
+ * manage_user_input :
+ * if input is valid (length > 0 and word has not already been entered by the user) :
+ * check if word is a TARGET of the CUE and store the word
+ * else : show an error message
+ */
+function manage_user_input(){
+    let input = $("#user_input").val().toUpperCase();
+    if(input.length > 0 && !all_user_input.includes(input)){
+        $("#game_message_p").attr("hidden",true);
+        $("#user_input").val("");
+        let isTarget = check_user_input(input);
+        store_user_input(input,isTarget);
+    } else {
+        $("#game_message_p")
+            .text("Input too short (min length = 1) or you already tried this word.")
+            .attr("hidden",false);
+    }
 }
 
-function calculate_score() {
+/**
+ * @param input : user input
+ * @returns {boolean}
+ *  check_user_input : checks if the user input is a valid TARGET of the CUE
+ */
+function check_user_input(input){
+    for(i in game_data) {
+        if(game_data[i]["TARGET"] == input) {
+            return true;
+        }
+    }
+    return false;
+}
+
+var user_input_p = $("#user_input_p"); // #user_input_p, declared here to avoid calling jquery multiple times
+var all_user_input = [];
+/**
+ * @param input : user input
+ * @param isTarget : is the word a target of the cue
+ * store_user_input : stores the user input in an array and in #user_input_p, changes its color if correct
+ */
+function store_user_input(input,isTarget) {
+    all_user_input.push(input);
+    // if word is a TARGET of the CUE, make it blue
+    if(isTarget) {
+        calculate_score(input);
+        input = "<span style='color:blue'>"+input+"</span>";
+    }
+    if(user_input_p.html().length == 0 ){
+        user_input_p.html(input);
+    } else {
+        user_input_p.html(user_input_p.html()+", "+input);
+    }
+}
+var score_sum = 0;
+function calculate_score(input) {
+    for(i in game_data){
+        if(input == game_data[i]["TARGET"]) {
+            score_sum += parseFloat(game_data[i]["MSG"]);
+        }
+    }
+}
+
+var game_data;
+/**
+ * @param data sent back by ajax request
+ * play_game : function that manages the game.
+ */
+function play_game(data) {
+    game_data = JSON.parse(data);
+    if(game_data.length == 0) { // if invalid cue, ask player to enter another one
+        $("#game_message_p")
+            .text("Your cue did not yield any result, please try another one.")
+            .attr("hidden",false);
+    } else {                    // if valid cue, start game
+        $("#game_message_p").attr("hidden",true);
+        $("#time").attr("disabled","disabled");
+        $("#cue")
+            .attr("disabled","disabled")
+            .val(game_data[0]["CUE"]);
+        $("#start_game")
+            .attr("hidden","hidden");
+        $("#user_input_div").removeAttr("hidden");
+        game_timer();
+        //debug stuff
+        console.log(game_data);
+        for(i in game_data) {
+            console.log(game_data[i]["TARGET"]);
+        }
+
+    }
+}
+
+/**
+ * game_timer : decrements time counter every second
+ */
+async function game_timer() {
+    let timer = $("#time");
+    while(timer.val()>0) {
+        await sleep(1000);
+        timer.val(timer.val()-1);
+    }
+    $("#game_message_p")
+        .html("Game Over!\n Votre score : "+score_sum)
+        .attr("hidden",false);
 
 }
 
-function get_cue(data) {
-    console.log("data : \n"+data);
-    console.log(JSON.parse(data));
+/**
+ * @param ms : nb of ms we want to sleep
+ * sleep : sleeps a certain amount of ms given in argument
+ */
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 ////////// END GAME LOGIC //////////
@@ -221,7 +324,6 @@ function update_table(data) {
     }
 }
 ////////// END CUE TABLE LOGIC //////////
-
 
 /**
  * Hides the word info histogram div (by default we show word info in the table div), and adds some event listeners.
@@ -369,7 +471,6 @@ function circular_histogram() {
 var email;      // LOGIN & REGISTRATION LOGIC : email address entered by the user (registration and login)
 var password;   // LOGIN & REGISTRATION LOGIC : password entered by the user (registration and login)
 var username;   // LOGIN & REGISTRATION LOGIC : username entered by the user (registration)
-var time;       // GAME LOGIC : time to play the game entered by the user
 var cue;        // GAME LOGIC : cue entered by the user
 
 /**
@@ -400,14 +501,12 @@ let app = $.sammy("body", function() {
     })
 
     this.post("#/game",function(){
-        console.log("je passe dans sammy #/game")
-        time = $("#time").value;
         let time_serialized = $("#time").serialize();
         cue = $("#cue").val();
         let cue_serialized = "cue="+cue;
         console.log("time_serialized : "+time_serialized+", cue_serialized : "+cue_serialized);
-        console.log("Trying to start game.");
-        $.get("../php/sql_get_cue.php",cue_serialized,get_cue);
+        console.log("trying to start game");
+        $.get("../php/sql_game_info.php",cue_serialized,play_game);
     })
 
     this.after(function() {
@@ -415,7 +514,7 @@ let app = $.sammy("body", function() {
         let regex = new RegExp(info_path);
         let path = this.path;
 
-        if (regex.test(path)) {
+        if(regex.test(path)) {
             // If we get here it means that we just used an info/:word route.
             let word = path.substring(regex.exec(path).index + info_path.length, path.length)
             $.get("../php/sql_word.php","word="+word, function(data) {
