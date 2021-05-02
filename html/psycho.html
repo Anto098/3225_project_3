@@ -58,6 +58,8 @@
         <br>
       </div>
 
+      <br>
+
       <div class="container bg-light" id="cue_div">
         <h2>Récupérer les mots de la base de données: </h2>
           <div class="row" id="row-head">
@@ -188,27 +190,6 @@
         <br>
       </div>
 
-      <div class="container bg-light" id="game_div">
-        <h1>Game</h1>
-        <form action="#/game" method="post">
-          <label for="time">
-            Time :
-            <input id="time" class="form-control" name="time" type="number" min="5" max="120" value="60">
-          </label>
-          <br>
-          <label for="cue">
-            Cue :
-            <input id="cue" class="form-control" name="cue" type="text" placeholder="Enter a cue here">
-          </label>
-          <br>
-          <label for="start_game">
-            <input type="submit" id="start_game" class="btn btn-success" value="Start!">
-          </label>
-        </form>
-
-        <input type="text" id="user_input" class="form-control" onclick="store_user_input()">
-      </div>
-
       <br>
 
       <div class="container bg-light" id="word_info_div">
@@ -237,38 +218,35 @@
                 <div class="col-4"><b>MSG</b></div>
               </div>
             </div>
-            <div class="container bg-light" id="word_info_as_table">
-              <div class="row">
-                <div class="col-4"></div>
-                <div class="col-4"></div>
-                <div class="col-4"></div>
-              </div>
-              <div class="row">
-                <div class="col-4"></div>
-                <div class="col-4"></div>
-                <div class="col-4"></div>
-              </div>
-              <div class="row">
-                <div class="col-4"></div>
-                <div class="col-4"></div>
-                <div class="col-4"></div>
-              </div>
-              <div class="row">
-                <div class="col-4"></div>
-                <div class="col-4"></div>
-                <div class="col-4"></div>
-              </div>
-              <div class="row">
-                <div class="col-4"></div>
-                <div class="col-4"></div>
-                <div class="col-4"></div>
-              </div>
-            </div>
+            <div class="container bg-light" id="word_info_as_table"></div>
           </div>
           <div class="container bg-light" id="word_info_as_histogram_div">
             <div id="my_dataviz"></div>
           </div>
         </div>
+      </div>
+
+      <br>
+
+      <div class="container bg-light" id="game_div">
+        <h1>Game</h1>
+        <form action="#/game" method="post">
+          <label for="time">
+            Time :
+            <input id="time" class="form-control" name="time" type="number" min="5" max="120" value="60">
+          </label>
+          <br>
+          <label for="cue">
+            Cue :
+            <input id="cue" class="form-control" name="cue" type="text" placeholder="Enter a cue here">
+          </label>
+          <br>
+          <label for="start_game">
+            <input type="submit" id="start_game" class="btn btn-success" value="Start!">
+          </label>
+        </form>
+
+        <input type="text" id="user_input" class="form-control" onclick="store_user_input()">
       </div>
 
   <script src="../js/main.js"></script>
