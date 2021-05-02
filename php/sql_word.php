@@ -1,7 +1,7 @@
 <?php
 
 // les champs de la base sont connus
-include("config_freq.php");
+include("config_usf_fan.php");
 include("opendb_diro.php");
 
 $word = $_REQUEST['word'];

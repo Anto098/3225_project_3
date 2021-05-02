@@ -192,7 +192,7 @@ function update_table (){
         }
         alert(this.responseText);
     }
-    req.open("get", "paging.php", true);
+    req.open("get", "sql_paging.php", true);
     req.send();
 }
 
