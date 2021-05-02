@@ -245,6 +245,7 @@
             <input type="submit" id="start_game" class="btn btn-success" value="Start!">
           </label>
         </form>
+
         <div hidden id="user_input_div">
           <label for="user_input">
             <input type="text" id="user_input" class="form-control" maxlength="14">
@@ -254,6 +255,7 @@
           <p id="user_input_p"></p>
         </div>
         <p hidden id="game_message_p"></p>
+        <input hidden type="button" id="game_restart_button" class="btn btn-success" value="Restart?" onclick="game_restart()">
       </div>
 
   <script src="../js/main.js"></script>

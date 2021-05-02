@@ -21,6 +21,7 @@ var cue;        // GAME LOGIC : cue entered by the user
  * keeps track of whether the user will try to login or register when clicking the submit button
  */
 var trying_to_login = true;
+
 /**
  * @type {boolean}
  * Keeps track of whether the user will try to logout when clicking the logout/register/login button
@@ -80,6 +81,7 @@ function toggle_register_login_logout() {
         $("#username").val("");
         trying_to_login = true;
     }
+    game_restart(); // if user played, logs out then logs back in, need to reload game
     $("#login_message")
         .val("")
         .attr("hidden",true);
@@ -95,7 +97,7 @@ function toggle_register_login_logout() {
 function register(data) {
     console.log("data : \n"+data);
     data = JSON.parse(data);
-    console.log(" user data : \nemail : "+email+", password : "+password+"\n");
+    console.log(" user data : \nemail : "+email_value+", password : "+password+"\n");
     console.log(" server data : \nemail : "+data["EMAIL"]+", password : "+data["PASSWORD"]+"\n");
     if(data["EMAIL"]==email || data["USERNAME"]==username) {
         $("#login_message")
@@ -123,9 +125,9 @@ function login(data) {
 
     // check if email and password correspond to what's in the database
     data = JSON.parse(data);
-    console.log(" user data : \nemail : "+email+", password : "+password+"\n");
+    console.log(" user data : \nemail : "+email_value+", password : "+password+"\n");
     console.log(" server data : \nemail : "+data["EMAIL"]+", password : "+data["PASSWORD"]+"\n");
-    if(data["EMAIL"]==email && data["PASSWORD"]==password) {
+    if(data["EMAIL"] == email_value && data["PASSWORD"] == password) {
         console.log("user exists");
         $("#login_form").attr("hidden",true);
         $("#login_register").html("Login successful!");
@@ -146,6 +148,11 @@ function login(data) {
 ////////// END LOGIN & REGISTRATION LOGIC //////////
 
 ////////// GAME LOGIC //////////
+
+var user_input_p = $("#user_input_p"); // #user_input_p, declared here to avoid calling jquery multiple times
+var all_user_input = [];
+var score_sum = 0;
+var game_data;
 
 /**
  * manage_user_input :
@@ -181,8 +188,6 @@ function check_user_input(input){
     return false;
 }
 
-var user_input_p = $("#user_input_p"); // #user_input_p, declared here to avoid calling jquery multiple times
-var all_user_input = [];
 /**
  * @param input : user input
  * @param isTarget : is the word a target of the cue
@@ -201,7 +206,11 @@ function store_user_input(input,isTarget) {
         user_input_p.html(user_input_p.html()+", "+input);
     }
 }
-var score_sum = 0;
+
+/**
+ * @param input
+ * looks up the score of a word given by the user, adds to the total score
+ */
 function calculate_score(input) {
     for(i in game_data){
         if(input == game_data[i]["TARGET"]) {
@@ -210,7 +219,6 @@ function calculate_score(input) {
     }
 }
 
-var game_data;
 /**
  * @param data sent back by ajax request
  * play_game : function that manages the game.
@@ -223,21 +231,24 @@ function play_game(data) {
             .attr("hidden",false);
     } else {                    // if valid cue, start game
         $("#game_message_p").attr("hidden",true);
-        $("#time").attr("disabled","disabled");
+        $("#time").attr("disabled",true);
         $("#cue")
-            .attr("disabled","disabled")
+            .attr("disabled",true)
             .val(game_data[0]["CUE"]);
         $("#start_game")
-            .attr("hidden","hidden");
+            .attr("hidden",true);
         $("#user_input_div").removeAttr("hidden");
         game_timer();
-        //debug stuff
-        console.log(game_data);
-        for(i in game_data) {
-            console.log(game_data[i]["TARGET"]);
-        }
-
     }
+}
+
+/**
+ * update_db : updates the GAMES_PLAYED and SCORE fields of a user after he played a game
+ */
+function update_db(){
+    $.post("../php/sql_game_nb_score.php",email_serialized+"&"+"score="+score_sum, function(data){
+        console.log(data);
+    });
 }
 
 /**
@@ -251,8 +262,32 @@ async function game_timer() {
     }
     $("#game_message_p")
         .html("Game Over!\n Votre score : "+score_sum)
-        .attr("hidden",false);
+        .removeAttr("hidden");
+    $("#user_input").attr("disabled",true);
+    $("#submit_user_input").attr("disabled",true);
+    $("#game_restart_button").removeAttr("hidden");
+    update_db(); // update db when game is over
+}
 
+function game_restart(){
+    $("#start_game").attr("hidden",false);
+    $("#user_input_div").attr("hidden",true);
+    $("#game_message_p").attr("hidden",true);
+    $("#time")
+        .removeAttr("disabled")
+        .val("60");
+    $("#cue")
+        .removeAttr("disabled")
+        .val("");
+    $("#user_input")
+        .attr("disabled",false)
+        .val("");
+    $("#submit_user_input").attr("disabled",false);
+    $("#game_restart_button").attr("hidden",true);
+    // reset all variables/html elements
+    all_user_input = [];
+    score_sum = 0;
+    $("#user_input_p").html("");
 }
 
 /**
@@ -468,7 +503,8 @@ function circular_histogram() {
 
 }
 
-var email;      // LOGIN & REGISTRATION LOGIC : email address entered by the user (registration and login)
+var email_value;      // LOGIN & REGISTRATION LOGIC : email address entered by the user (registration and login)
+var email_serialized;
 var password;   // LOGIN & REGISTRATION LOGIC : password entered by the user (registration and login)
 var username;   // LOGIN & REGISTRATION LOGIC : username entered by the user (registration)
 var cue;        // GAME LOGIC : cue entered by the user
@@ -484,8 +520,9 @@ let app = $.sammy("body", function() {
     this.post("#",function() {
         // Login/Register Route
         // Tells which function to execute whether we're trying to login or register
-        email = $("#email").val();
-        let email_serialized = $("#email").serialize();
+        let email = $("#email");
+        email_value = email.val();
+        email_serialized = email.serialize();
         password = sha1($("#password").val());          // encoding password with SHA1
         let password_serialized = "password="+password; // serializing by hand
         if(trying_to_login){
