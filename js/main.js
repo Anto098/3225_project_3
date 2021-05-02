@@ -8,6 +8,7 @@ const MAX_OFFSET = Math.floor(ROW_COUNT / 10) * 10;
  */
 var current_offset = 0;
 
+////////// LOGIN & REGISTRATION LOGIC //////////
 
 var user_input = [];
 var email;      // LOGIN LOGIC : email address entered by the user
@@ -39,10 +40,6 @@ var is_word_info_as_table = true;
  */
 var word_info = null;
 
-////////// END GLOBAL VARIABLES //////////
-
-////////// LOGIN LOGIC //////////
-
 /**
  * toggles password on and off when button is clicked
  */
@@ -54,6 +51,7 @@ function toggle_password() {
         x.attr("type","password");
     }
 }
+
 /**
  * toggles between `register` and `login`
  */
@@ -95,15 +93,18 @@ function toggle_register_login_logout() {
  * Executes the procedure required to register a user
  */
 function register(data) {
-    console.log("registering");
-    if(data == "USER CREATED"){
+    console.log("data : \n"+data);
+    data = JSON.parse(data);
+    console.log(" user data : \nemail : "+email+", password : "+password+"\n");
+    console.log(" server data : \nemail : "+data["EMAIL"]+", password : "+data["PASSWORD"]+"\n");
+    if(data["EMAIL"]==email || data["USERNAME"]==username){
+        $("#login_message")
+            .text("Email already in use.")
+            .attr("hidden",false);
+    } else {
         toggle_register_login_logout();
         $("#login_message")
             .text("The account was successfully created.")
-            .attr("hidden",false);
-    } else {
-        $("#login_message")
-            .text("Email already in use.")
             .attr("hidden",false);
     }
 
@@ -113,9 +114,7 @@ function register(data) {
  * Executes the procedure required to login a user
  */
 function login(data) {
-    console.log(data)
     // check if email address is valid
-
     let regex = new RegExp("is not a valid email address");
     if (regex.test(data)) {
         $("#login_message").text("Please enter a valid email address.");
@@ -144,7 +143,7 @@ function login(data) {
     }
 }
 
-////////// END LOGIN LOGIC //////////
+////////// END LOGIN & REGISTRATION LOGIC //////////
 
 ////////// GAME LOGIC //////////
 
@@ -158,6 +157,7 @@ function calculate_score() {
 
 function get_cue(data) {
     console.log("data : \n"+data);
+    console.log(JSON.parse(data));
 }
 
 ////////// END GAME LOGIC //////////
@@ -223,7 +223,6 @@ function update_table(data) {
 ////////// END CUE TABLE LOGIC //////////
 
 
-////////// WORD INFO LOGIC //////////
 /**
  * Hides the word info histogram div (by default we show word info in the table div), and adds some event listeners.
  */
@@ -367,10 +366,12 @@ function circular_histogram() {
 
 }
 
-////////// END WORD INFO LOGIC //////////
+var email;      // LOGIN & REGISTRATION LOGIC : email address entered by the user (registration and login)
+var password;   // LOGIN & REGISTRATION LOGIC : password entered by the user (registration and login)
+var username;   // LOGIN & REGISTRATION LOGIC : username entered by the user (registration)
+var time;       // GAME LOGIC : time to play the game entered by the user
+var cue;        // GAME LOGIC : cue entered by the user
 
-
-////////// APP LOGIC //////////
 /**
  * Sammy application logic. Manages functions associated with routes.
  */
@@ -386,11 +387,11 @@ let app = $.sammy("body", function() {
         let email_serialized = $("#email").serialize();
         password = sha1($("#password").val());          // encoding password with SHA1
         let password_serialized = "password="+password; // serializing by hand
-
         if(trying_to_login){
             console.log("trying to login");
             $.post("../php/sql_login.php", email_serialized + "&" + password_serialized, login);
         } else {
+            let username = $("#username").val();
             let username_serialized = $("#username").serialize();
             console.log("trying to register");
             $.post("../php/sql_register.php", email_serialized + "&" + password_serialized + "&" + username_serialized, register);
@@ -404,9 +405,9 @@ let app = $.sammy("body", function() {
         let time_serialized = $("#time").serialize();
         cue = $("#cue").val();
         let cue_serialized = "cue="+cue;
-        console.log("time_serialized : "+time_serialized+", cue_serialized :"+cue_serialized);
+        console.log("time_serialized : "+time_serialized+", cue_serialized : "+cue_serialized);
         console.log("Trying to start game.");
-        $.get("../php/get_cue.php",cue_serialized,get_cue);
+        $.get("../php/sql_get_cue.php",cue_serialized,get_cue);
     })
 
     this.after(function() {
