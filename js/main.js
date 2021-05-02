@@ -228,6 +228,7 @@ function update_table(data) {
  * Hides the word info histogram div (by default we show word info in the table div), and adds some event listeners.
  */
 function setup_word_info() {
+    $("#word_info_div").hide();
     $("#word_info_as_histogram_div").hide();
 
     $("#output_table").change(function() {
@@ -420,6 +421,7 @@ let app = $.sammy("body", function() {
             $.get("../php/sql_word.php","word="+word, function(data) {
                 word_info = JSON.parse(data);
                 is_word_info_as_table ? display_word_info_as_table() : display_word_info_as_histogram();
+                $("#word_info_div").show();
             })
         }
 
