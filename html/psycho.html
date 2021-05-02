@@ -6,10 +6,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="../js/sammy.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha1/0.6.0/sha1.min.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+
     <meta charset="utf-8">
     <title>ΨΚΩ</title>
   </head>
-  <body>
+  <body onload="main()">
 
       <div class="container bg-light" id="login_div">
         <div class="container">
@@ -69,7 +71,7 @@
           </div>
           <div class="row" id="row-0">
             <div class="col-4">
-              <a href="" rel="word"></a>
+              <a href="#/info/WRESTLING" rel="word">WRESTLING</a>
             </div>
             <div class="col-4">
               
@@ -80,7 +82,7 @@
           </div>
           <div class="row" id="row-1">
             <div class="col-4">
-              <a href="" rel="word"></a>
+              <a href="#/info/WHISKEY" rel="word">WHISKEY</a>
             </div>
             <div class="col-4">
               
@@ -181,6 +183,59 @@
           <input type="submit" class="btn btn-primary" id="previous" value="Previous" onclick="previous_page()">
           <input type="submit" class="btn btn-primary" id="next" value="Next" onclick="next_page()">
         </form>
+      </div>
+
+      <br>
+
+      <div class="container bg-light" id="word_info_div">
+        <h2> Affichage des informations d'un mot en particulier :</h2>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="output_type" id="output_table" value="table" checked>
+          <label class="form-check-label" for="output_table">
+            Affichage en Table
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="output_type" id="output_histogram" value="d3">
+          <label class="form-check-label" for="output_histogram">
+            Affichage en Histogramme
+          </label>
+        </div>
+
+        <br>
+
+        <div class="container bg-light" id="word_info_data_div">
+          <div class="container bg-light" id="word_info_as_table_div">
+            <div class="row">
+              <div class="col-4"></div>
+              <div class="col-4"></div>
+              <div class="col-4"></div>
+            </div>
+            <div class="row">
+              <div class="col-4"></div>
+              <div class="col-4"></div>
+              <div class="col-4"></div>
+            </div>
+            <div class="row">
+              <div class="col-4"></div>
+              <div class="col-4"></div>
+              <div class="col-4"></div>
+            </div>
+            <div class="row">
+              <div class="col-4"></div>
+              <div class="col-4"></div>
+              <div class="col-4"></div>
+            </div>
+            <div class="row">
+              <div class="col-4"></div>
+              <div class="col-4"></div>
+              <div class="col-4"></div>
+            </div>
+          </div>
+          <div class="container bg-light" id="word_info_as_histogram_div">
+
+          </div>
+        </div>
       </div>
 
   <script src="../js/main.js"></script>
