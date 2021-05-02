@@ -17,6 +17,6 @@ if ($range = mysqli_fetch_assoc($result)) {
     echo json_encode($data);
     mysqli_free_result($result);
 } else {
-    echo json_encode(array());
+    echo json_encode(array("EMAIL" => "NULL", "PASSWORD" => "NULL"));
 }
 include("closedb_diro.php");
