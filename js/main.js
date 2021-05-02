@@ -273,11 +273,11 @@ let app = $.sammy('body', function() {
         let password_serialized = "password="+password; // serializing by hand
         if(trying_to_login){
             console.log("trying to login");
-            $.post("../php/login.php", email_serialized + "&" + password_serialized, login);
+            $.post("../php/sql_login.php", email_serialized + "&" + password_serialized, login);
         } else {
             let username_serialized = $("#username").serialize();
             console.log("trying to register");
-            $.post("../php/register.php", email_serialized + "&" + password_serialized + "&" + username_serialized, register);
+            $.post("../php/sql_register.php", email_serialized + "&" + password_serialized + "&" + username_serialized, register);
         }
         $("#password").val("");
     })
@@ -291,7 +291,7 @@ let app = $.sammy('body', function() {
         if (regex.test(path)) {
             // If we get here it means that we just used an info/:word route.
             let word = path.substring(regex.exec(path).index + info_path.length, path.length)
-            $.get("../php/word.php","word="+word, function(data) {
+            $.get("../php/sql_word.php","word="+word, function(data) {
                 word_info = JSON.parse(data);
                 is_word_info_as_table ? display_word_info_as_table() : display_word_info_as_histogram();
             })
