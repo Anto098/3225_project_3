@@ -18,9 +18,7 @@ while ($range = mysqli_fetch_assoc($result)) {
     $cue = $range['CUE'];
     $target = $range['TARGET'];
     $msg = $range['MSG'];
-    $data_array[] = $word;
-    $data_array[] = $target;
-    $data_array[] = $msg;
+    $data_array[] = array("word"=>$word, "targetword"=>$target, "msg"=>$msg);
 }
 echo json_encode($data_array);
 mysqli_free_result($result);
