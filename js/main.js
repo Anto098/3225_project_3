@@ -1,11 +1,11 @@
-const ROW_COUNT = 0;
-const MAX_OFFSET = ROW_COUNT / 10;
+const ROW_COUNT = 13;
+const MAX_OFFSET = Math.floor(ROW_COUNT / 10) * 10;
 
 /**
  * @type {int}
  * keeps track of current page
  */
-var offset = 0;
+var current_offset = 0;
 
 ////////// LOGIN LOGIC //////////
 
@@ -160,46 +160,57 @@ function get_cue(data) {
  * gets previous 10 cues in table
  */
 function previous_page() {
-    if(offset > 0) {
-        offset -= 10;
+    if(current_offset > 0) {
+        current_offset -= 10;
     }
+    let offset = "offset="+current_offset;
+    $.post('./paging.php',offset,update_table);
 }
 
 /**
  * gets next 10 cues in table
  */
 function next_page() {
-    if(offset < MAX_OFFSET) {
-        offset += 10;
+    if(current_offset < MAX_OFFSET) {
+        current_offset += 10;
     }
+    let offset = "offset="+current_offset;
+    $.post('./paging.php',offset,update_table);
 }
 
 /**
  * gets next 10 cues in table
  */
-function update_table (){
-    function reqListener () {
-        console.log(this.responseText);
-    }
-
-    let req = new XMLHttpRequest();
-    req.onload = function() {
-        for (let i = 0; i < req.length; i++) {
-            let row = $("#row-"+i);
-            for(let j = 1; j <= req[i].length; j++) {
-                if(j == 1) {
-                    $(row+":nth-child("+j+"):first-child").attr("href", "#/info/"+req[i][j]);
-                    $(row+":nth-child("+j+"):first-child").innerHTML(req[i][j]);
-                }
-                else {
-                    $(row+":nth-child("+j+")").innerHTML(req[i][j]);
-                }
+function update_table(data) {
+    data = JSON.parse(data);
+    console.log(data[0]['0']);
+    let row = "row-";
+    for(let i = 0; i < 10; i++) {
+        for(let j = 0; j < 3; j++) {
+            if(j == 0) {
+                document.getElementById(row+i).getElementsByTagName('div')[j]
+                    .getElementsByTagName('a')[j].setAttribute("href", "");
+                document.getElementById(row+i).getElementsByTagName('div')[j]
+                    .getElementsByTagName('a')[j].textContent = "";
+            }
+            else {
+                document.getElementById(row+i).getElementsByTagName('div')[j].textContent = "";
             }
         }
-        alert(this.responseText);
     }
-    req.open("get", "sql_paging.php", true);
-    req.send();
+    for(let i = 0; i < Math.min(10, ROW_COUNT - current_offset); i++) {
+        for(let j = 0; j < 3; j++) {
+            if(j == 0) {
+                document.getElementById(row+i).getElementsByTagName('div')[j]
+                    .getElementsByTagName('a')[j].setAttribute("href", "#/info/"+data[i][j]);
+                document.getElementById(row+i).getElementsByTagName('div')[j]
+                    .getElementsByTagName('a')[j].textContent = data[i][j];
+            }
+            else {
+                document.getElementById(row+i).getElementsByTagName('div')[j].textContent = data[i][j];
+            }
+        }
+    }
 }
 
 
