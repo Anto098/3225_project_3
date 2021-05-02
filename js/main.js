@@ -21,6 +21,21 @@ var trying_to_login = true;
 var trying_to_logout = false;
 
 /**
+ * @type {boolean}
+ * keeps track of wether the user wants to display a word information as a table or as a d3 histogram
+ * if true, then we display as table, if false then we display as a d3 histogram.
+ */
+var is_word_info_as_table = true;
+
+/**
+ * @ {json}
+ * stores a word information retrieved on the database if a player clicks on it on the #/cue table.
+ */
+var word_info = null;
+
+
+
+/**
  * toggles password on and off when button is clicked
  */
 function toggle_password() {
@@ -186,6 +201,62 @@ function update_table (){
 var email;      // email address entered by the user
 var password;   // password entered by the user
 /**
+ * Hides the word info histogram div (by default we show word info in the table div), and adds some event listeners.
+ */
+function setup_word_info() {
+    $("#word_info_as_histogram_div").hide();
+
+    $("#output_table").change(function() {
+        is_word_info_as_table=true;
+        display_word_info_as_table()
+    });
+
+    $("#output_histogram").change(function() {
+        is_word_info_as_table=false;
+        display_word_info_as_histogram()
+    });
+
+}
+
+/**
+ * Displays the stored word_info as a table.
+ */
+function display_word_info_as_table() {
+    if(word_info != null) {
+        let target_number = word_info.length/3;
+
+        let table = $("#word_info_as_table_div");
+        table.empty();
+        for (let i=0; i<target_number; i++) {
+            let row = $(document.createElement("div"));
+            row.addClass("row");
+            row.append("<div class='col-4'></div><div class='col-4'></div><div class='col-4'></div>");
+            table.append(row);
+        }
+
+        d3.select("#word_info_as_table_div")
+            .selectAll("div .col-4")
+            .data(word_info)
+            .text(d => d);
+
+        table.show();
+        $("#word_info_as_histogram_div").hide();
+    }
+}
+
+/**
+ * Displays the stored word_info as an histogram.
+ */
+function display_word_info_as_histogram() {
+    if(word_info != null) {
+
+        console.log("as histogram")
+        $("#word_info_as_table_div").hide();
+        $("#word_info_as_histogram_div").show();
+    }
+}
+
+/**
  * Sammy application logic. Manages functions associated with routes.
  */
 let app = $.sammy('body', function() {
@@ -216,13 +287,25 @@ let app = $.sammy('body', function() {
         let regex = new RegExp(info_path);
         let path = this.path;
 
+
         if (regex.test(path)) {
             // If we get here it means that we just used an info/:word route.
             let word = path.substring(regex.exec(path).index + info_path.length, path.length)
-            console.log(word)
+            $.get("../php/word.php","word="+word, function(data) {
+                word_info = JSON.parse(data);
+                is_word_info_as_table ? display_word_info_as_table() : display_word_info_as_histogram();
+            })
         }
 
     })
 
-}).run();
+})
+
+/**
+ * Called after html body is loaded. Setups the app.
+ */
+function main() {
+    app.run();
+    setup_word_info()
+}
 
