@@ -233,8 +233,9 @@ function display_word_info_as_table() {
     if(word_info != null) {
         let target_number = word_info.length;
 
-        let table = $("#word_info_as_table_div");
+        let table = $("#word_info_as_table");
         table.empty();
+
         for (let i=0; i<target_number; i++) {
             let row = $(document.createElement("div"));
             row.addClass("row");
@@ -248,12 +249,12 @@ function display_word_info_as_table() {
             word_info_array.push(word_info[j].word, word_info[j].targetword, word_info[j].msg)
         }
 
-        d3.select("#word_info_as_table_div")
+        d3.select("#word_info_as_table")
             .selectAll("div .col-4")
             .data(word_info_array)
             .text(d => d);
 
-        table.show();
+        $("#word_info_as_table_div").show();
         $("#word_info_as_histogram_div").hide();
     }
 }
