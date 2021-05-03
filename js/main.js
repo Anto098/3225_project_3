@@ -517,6 +517,7 @@ function load_leaderboard() {
         data = JSON.parse(data);
 
         let table = $("#leaderboard_table");
+        table.empty();
 
         for (let i=0; i<data.length; i++) {
             let row = $(document.createElement("div"));
@@ -679,6 +680,7 @@ let app = $.sammy("body", function() {
         if (is_in_game) {
             window.location.hash = "#/game";
         } else if (is_logged_in) {
+            load_leaderboard();
             show_leaderboard();
         } else {
             window.location.hash = "";
