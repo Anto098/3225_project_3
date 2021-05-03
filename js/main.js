@@ -13,8 +13,8 @@ var current_offset = 0;
 var user_input = [];
 var email;      // LOGIN LOGIC : email address entered by the user
 var password;   // LOGIN LOGIC : password entered by the user
-var time;       // GAME LOGIC : time to play the game entered by the user
-var cue;        // GAME LOGIC : cue entered by the user
+var is_logged_in = false;
+var is_in_game = false;
 
 /**
  * @type {boolean}
@@ -55,6 +55,7 @@ function toggle_register_login_logout() {
 
         window.location.hash = "";
 
+        is_logged_in = false;
         trying_to_logout = false;
     }
     if(trying_to_login) {
@@ -128,9 +129,12 @@ function login(data) {
         trying_to_login = false;
         $("#email").val("");
 
+        is_logged_in = true;
         show_navbar_buttons();
     } else {
-        $("#login_message").text("Either the user doesn't exist or the password is incorrect.");
+        $("#login_message")
+            .text("Either the user doesn't exist or the password is incorrect.")
+            .removeAttr("hidden");
     }
 }
 
@@ -227,6 +231,8 @@ function play_game(data) {
         $("#start_game")
             .attr("hidden",true);
         $("#user_input_div").removeAttr("hidden");
+
+        is_in_game = true;
         game_timer();
     }
 }
@@ -235,9 +241,7 @@ function play_game(data) {
  * update_db : updates the GAMES_PLAYED and SCORE fields of a user after he played a game
  */
 function update_db(){
-    $.post("../php/sql_game_nb_score.php",email_serialized+"&"+"score="+score_sum, function(data){
-        console.log(data);
-    });
+    $.post("../php/sql_game_nb_score.php",email_serialized+"&"+"score="+score_sum, function(){});
 }
 
 /**
@@ -250,11 +254,13 @@ async function game_timer() {
         timer.val(timer.val()-1);
     }
     $("#game_message_p")
-        .html("Game Over!\n Votre score : "+score_sum)
+        .html("Game Over!\n Your score is : "+score_sum)
         .removeAttr("hidden");
     $("#user_input").attr("disabled",true);
     $("#submit_user_input").attr("disabled",true);
     $("#game_restart_button").removeAttr("hidden");
+
+    is_in_game = false;
     update_db(); // update db when game is over
 }
 
@@ -400,7 +406,6 @@ function display_word_info_as_histogram() {
         $("#my_dataviz").empty();
         circular_histogram()
 
-        console.log("as histogram")
         $("#word_info_as_table_div").hide();
         $("#word_info_as_histogram_div").show();
     }
@@ -533,7 +538,6 @@ var email_value;      // LOGIN & REGISTRATION LOGIC : email address entered by t
 var email_serialized;
 var password;   // LOGIN & REGISTRATION LOGIC : password entered by the user (registration and login)
 var username;   // LOGIN & REGISTRATION LOGIC : username entered by the user (registration)
-var cue;        // GAME LOGIC : cue entered by the user
 
 function show_login_and_register() {
     $("#login_div").show();
@@ -562,11 +566,20 @@ function show_word_info() {
     $("#welcome_div").hide();
 }
 
-function show_top_leaderboard() {
+function show_game() {
     $("#login_div").hide();
     $("#cue_div").hide();
     $("#word_info_div").hide();
     $("#game_div").show();
+    $("#leaderboard_div").hide();
+    $("#welcome_div").hide();
+}
+
+function show_leaderboard() {
+    $("#login_div").hide();
+    $("#cue_div").hide();
+    $("#word_info_div").hide();
+    $("#game_div").hide();
     $("#leaderboard_div").show();
     $("#welcome_div").hide();
 }
@@ -574,10 +587,10 @@ function show_top_leaderboard() {
 function show_navbar_buttons() {
     $("#navbar_cues_button").show();
     $("#navbar_game_button").show();
+    $("#navbar_leaderboard_button").show();
 }
 
 function show_welcome_page() {
-    console.log("welcome page")
     $("#login_div").hide();
     $("#cue_div").hide();
     $("#word_info_div").hide();
@@ -586,6 +599,7 @@ function show_welcome_page() {
 
     $("#navbar_cues_button").hide();
     $("#navbar_game_button").hide();
+    $("#navbar_leaderboard_button").hide();
 
     $("#welcome_div").show();
 }
@@ -597,8 +611,104 @@ function show_welcome_page() {
  */
 let app = $.sammy("body", function() {
     this.get("#/", function() {
-        show_login_and_register();
+        if (is_in_game) {
+            window.location.hash = "#/game";
+        } else {
+            show_login_and_register();
+        }
+
+        if (is_logged_in) {
+            show_navbar_buttons();
+        }
     })
+
+    this.get("#/cue", function() {
+
+        if (is_in_game) {
+            window.location.hash = "#/game";
+        } else if (is_logged_in) {
+            show_cue();
+        } else {
+            window.location.hash = "";
+        }
+    })
+
+    this.get("#/game_menu", function() {
+        if (is_in_game) {
+            window.location.hash = "#/game";
+            return;
+        } else if (is_logged_in) {
+            show_game();
+        } else {
+            window.location.hash = "";
+        }
+    })
+
+    this.get("#/game",function(){
+        if (is_in_game) {
+            return;
+        } else if (is_logged_in) {
+            let queryString = window.location.hash.substr(7);
+            let urlParams = new URLSearchParams(queryString);
+
+            let cue = urlParams.get("cue");
+            let time = urlParams.get("time");
+
+            if (time !== null && parseInt(time) && time>=5 && time<=120) {
+                $("#time").val(time);
+            }
+
+            if (cue === null) {
+                cue=$("#cue").val();
+            }
+            let cue_serialized = "cue="+cue;
+
+            console.log(queryString)
+            console.log(cue)
+            console.log(time)
+
+            $.get("../php/sql_game_info.php",cue_serialized,play_game);
+
+            show_game();
+        } else {
+            window.location.hash = "";
+        }
+    })
+
+    this.get("#/top", function() {
+        if (is_in_game) {
+            window.location.hash = "#/game";
+        } else if (is_logged_in) {
+            show_leaderboard();
+        } else {
+            window.location.hash = "";
+        }
+    })
+
+    this.get("#/info/:word", function() {
+        if (is_in_game) {
+            window.location.hash = "#/game";
+        } else if (is_logged_in) {
+            let word = window.location.hash.substr(7);
+            $.get("../php/sql_word.php","word="+word, function(data) {
+                word_info = JSON.parse(data);
+
+                is_word_info_as_table ? display_word_info_as_table() : display_word_info_as_histogram();
+                $("#word_info_title_value").text(word);
+                show_word_info();
+            });
+        } else {
+            window.location.hash = "";
+        }
+    })
+
+    this.get("", function() {
+        if (is_in_game) {
+            window.location.hash = "#/game";
+        } else {
+            show_welcome_page();
+        }
+    });
 
     this.post("#/",function() {
         // Login/Register Route
@@ -617,39 +727,6 @@ let app = $.sammy("body", function() {
         }
         $("#password").val("");
     })
-
-    this.post("#/game",function(){
-        let time_serialized = $("#time").serialize();
-        cue = $("#cue").val();
-        let cue_serialized = "cue="+cue;
-        console.log("time_serialized : "+time_serialized+", cue_serialized : "+cue_serialized);
-        console.log("trying to start game");
-        $.get("../php/sql_game_info.php",cue_serialized,play_game);
-    })
-
-    this.after(function() {
-        let info_path = '/psycho.html#/info/';
-        let regex = new RegExp(info_path);
-        let path = this.path;
-        if(regex.test(path)) {
-
-            // If we get here it means that we just used an info/:word route.
-            let word = path.substring(regex.exec(path).index + info_path.length, path.length);
-            $.get("../php/sql_word.php","word="+word, function(data) {
-                word_info = JSON.parse(data);
-
-                is_word_info_as_table ? display_word_info_as_table() : display_word_info_as_histogram();
-                $("#word_info_title_value").text(word);
-                show_word_info();
-            });
-        }
-    })
-
-    this.get("", function() {
-        console.log("empty route")
-        show_welcome_page();
-    });
-
 })
 
 /**

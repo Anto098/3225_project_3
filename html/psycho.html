@@ -13,8 +13,6 @@
   </head>
   <body onload="main()">
 
-      <br>
-
       <div class="container" id="welcome_div">
         <h2>Welcome to ΨΚΩ ! Please login or register:</h2>
       </div>
@@ -29,10 +27,19 @@
             </form>
           </div>
           <div class="col-2" id="navbar_cues_button">
-            <button class="btn btn-info my-2 my-sm-0 w-100" type="submit" onclick="show_cue()">Cues</button>
+            <form action="#/cue" method="get">
+              <input class="btn btn-info my-2 my-sm-0 w-100" type="submit" value="Cues">
+            </form>
           </div>
           <div class="col-2" id="navbar_game_button">
-            <button class="btn btn-danger my-2 my-sm-0 w-100" type="submit" onclick="show_top_leaderboard()">Game</button>
+            <form action="#/game_menu" method="get">
+              <input class="btn btn-danger my-2 my-sm-0 w-100" type="submit" value="Game">
+            </form>
+          </div>
+          <div class="col-2" id="navbar_leaderboard_button">
+            <form action="#/top" method="get">
+              <input class="btn btn-primary my-2 my-sm-0 w-100" type="submit" value="Leaderboard">
+            </form>
           </div>
         </div>
       </div>
@@ -85,7 +92,50 @@
         <br>
       </div>
 
-      <br>
+      <div class="container bg-light" id="game_div">
+        <h2>Game</h2>
+
+        <form action="#/game" method="get">
+          <label for="time">
+            Time :
+            <input id="time" class="form-control" name="time" type="number" min="5" max="120" value="60">
+          </label>
+          <br>
+          <label for="cue">
+            Cue :
+            <input id="cue" class="form-control" name="cue" type="text" placeholder="Enter a cue here" maxlength="17">
+          </label>
+          <br>
+          <label for="start_game">
+            <input type="submit" id="start_game" class="btn btn-success" value="Start!">
+          </label>
+        </form>
+
+        <div hidden id="user_input_div">
+          <label for="user_input">
+            <input type="text" id="user_input" class="form-control" maxlength="14">
+          </label>
+          <input type="button" id="submit_user_input" class="btn btn-success" value="Add entry" onclick="manage_user_input()">
+          <br>
+          <p id="user_input_p"></p>
+        </div>
+        <p hidden id="game_message_p"></p>
+        <input hidden type="button" id="game_restart_button" class="btn btn-success" value="Restart?" onclick="game_restart()">
+      </div>
+
+      <div class="container bg-light" id="leaderboard_div">
+        <h2>Leaderboard</h2>
+        <div class="container bg-light" id="leaderboard_table_header">
+          <div class="row">
+            <div class="col-4"><b>Rank</b></div>
+            <div class="col-4"><b>Username</b></div>
+            <div class="col-4"><b>Maximum Score</b></div>
+          </div>
+        </div>
+        <div class="container bg-light" id="leaderboard_table">
+
+        </div>
+      </div>
 
       <div class="container bg-light" id="cue_div">
         <h2>Cues in the data base:</h2>
@@ -250,57 +300,6 @@
           </div>
         </div>
       </div>
-
-      <br>
-
-      <div class="container bg-light" id="game_div">
-        <h1>Game</h1>
-
-        <form action="#/game" method="post">
-          <label for="time">
-            Time :
-            <input id="time" class="form-control" name="time" type="number" min="5" max="120" value="60">
-          </label>
-          <br>
-          <label for="cue">
-            Cue :
-            <input id="cue" class="form-control" name="cue" type="text" placeholder="Enter a cue here" maxlength="17">
-          </label>
-          <br>
-          <label for="start_game">
-            <input type="submit" id="start_game" class="btn btn-success" value="Start!">
-          </label>
-        </form>
-
-        <div hidden id="user_input_div">
-          <label for="user_input">
-            <input type="text" id="user_input" class="form-control" maxlength="14">
-          </label>
-          <input type="button" id="submit_user_input" class="btn btn-success" value="Add entry" onclick="manage_user_input()">
-          <br>
-          <p id="user_input_p"></p>
-        </div>
-        <p hidden id="game_message_p"></p>
-        <input hidden type="button" id="game_restart_button" class="btn btn-success" value="Restart?" onclick="game_restart()">
-      </div>
-
-      <br>
-
-      <div class="container bg-light" id="leaderboard_div">
-        <h2>Leaderboard</h2>
-        <div class="container bg-light" id="leaderboard_table_header">
-          <div class="row">
-            <div class="col-4"><b>Rank</b></div>
-            <div class="col-4"><b>Username</b></div>
-            <div class="col-4"><b>Maximum Score</b></div>
-          </div>
-        </div>
-        <div class="container bg-light" id="leaderboard_table">
-
-        </div>
-      </div>
-
-      <br>
 
   <script src="../js/main.js"></script>
   </body>
