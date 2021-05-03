@@ -13,6 +13,32 @@
   </head>
   <body onload="main()">
 
+      <br>
+
+      <div class="container" id="welcome_div">
+        <h2>Welcome to ΨΚΩ ! Please login or register:</h2>
+      </div>
+
+      <br>
+
+      <div class="container bg bg-light">
+        <div class="row">
+          <div class="col-2" id="navbar_login_register_button">
+            <form action="#/" method="get">
+              <input class="btn btn-success my-2 my-sm-0 w-100" type="submit" value="Login/Register">
+            </form>
+          </div>
+          <div class="col-2" id="navbar_cues_button">
+            <button class="btn btn-info my-2 my-sm-0 w-100" type="submit" onclick="show_cue()">Cues</button>
+          </div>
+          <div class="col-2" id="navbar_game_button">
+            <button class="btn btn-danger my-2 my-sm-0 w-100" type="submit" onclick="show_top_leaderboard()">Game</button>
+          </div>
+        </div>
+      </div>
+
+      <br>
+
       <div class="container bg-light" id="login_div">
         <div class="container">
             <div class="row">
@@ -28,7 +54,7 @@
             </div>
         </div>
 
-        <form id="login_form" action="#" method="post">
+        <form id="login_form" action="#/" method="post">
           <div hidden id="username_div">
             <label for="username">
               Username
@@ -62,16 +88,16 @@
       <br>
 
       <div class="container bg-light" id="cue_div">
-        <h2>Mots de la base de données: </h2>
+        <h2>Cues in the data base:</h2>
           <div class="row" id="row-head">
             <div class="col-4">
-              CUE
+              <b>CUE</b>
             </div>
             <div class="col-4">
-              TARGET
+              <b>TARGET</b>
             </div>
             <div class="col-4">
-              MSG
+              <b>MSG</b>
             </div>
           </div>
           <div class="row" id="row-0">
@@ -192,17 +218,17 @@
       <br>
 
       <div class="container bg-light" id="word_info_div">
-        <h2> Affichage des informations d'un mot en particulier :</h2>
+        <h2> Information of the word <span id="word_info_title_value"></span>:</h2>
         <div class="form-check">
           <input class="form-check-input" type="radio" name="output_type" id="output_table" value="table" checked>
           <label class="form-check-label" for="output_table">
-            Affichage en Table
+            Display as table
           </label>
         </div>
         <div class="form-check">
           <input class="form-check-input" type="radio" name="output_type" id="output_histogram" value="d3">
           <label class="form-check-label" for="output_histogram">
-            Affichage en Histogramme
+            Display as histogram
           </label>
         </div>
 
@@ -257,6 +283,24 @@
         <p hidden id="game_message_p"></p>
         <input hidden type="button" id="game_restart_button" class="btn btn-success" value="Restart?" onclick="game_restart()">
       </div>
+
+      <br>
+
+      <div class="container bg-light" id="leaderboard_div">
+        <h2>Leaderboard</h2>
+        <div class="container bg-light" id="leaderboard_table_header">
+          <div class="row">
+            <div class="col-4"><b>Rank</b></div>
+            <div class="col-4"><b>Username</b></div>
+            <div class="col-4"><b>Maximum Score</b></div>
+          </div>
+        </div>
+        <div class="container bg-light" id="leaderboard_table">
+
+        </div>
+      </div>
+
+      <br>
 
   <script src="../js/main.js"></script>
   </body>
