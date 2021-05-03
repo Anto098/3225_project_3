@@ -29,19 +29,6 @@ var trying_to_login = true;
 var trying_to_logout = false;
 
 /**
- * @type {boolean}
- * keeps track of wether the user wants to display a word information as a table or as a d3 histogram
- * if true, then we display as table, if false then we display as a d3 histogram.
- */
-var is_word_info_as_table = true;
-
-/**
- * @ {json}
- * stores a word information retrieved on the database if a player clicks on it on the #/cue table.
- */
-var word_info = null;
-
-/**
  * toggles password on and off when button is clicked
  */
 function toggle_password() {
@@ -65,6 +52,9 @@ function toggle_register_login_logout() {
             .attr("value","Login?");
         $("#login_form").attr("hidden",false);
         $("#login_message").text("");
+
+        window.location.hash = "";
+
         trying_to_logout = false;
     }
     if(trying_to_login) {
@@ -79,6 +69,7 @@ function toggle_register_login_logout() {
         $("#login").attr("value","Login!");
         $("#username_div").attr("hidden",true);
         $("#username").val("");
+
         trying_to_login = true;
     }
     game_restart(); // if user played, logs out then logs back in, need to reload game
@@ -95,10 +86,7 @@ function toggle_register_login_logout() {
  * Executes the procedure required to register a user
  */
 function register(data) {
-    console.log("data : \n"+data);
     data = JSON.parse(data);
-    console.log(" user data : \nemail : "+email_value+", username : "+username+"\n");
-    console.log(" server data : \nemail : "+data["EMAIL"]+", username : "+data["USERNAME"]+"\n");
     if(data["EMAIL"]===email_value || data["USERNAME"]===username) {
         $("#login_message")
             .text("Email or Username already in use.")
@@ -125,14 +113,11 @@ function login(data) {
 
     // check if email and password correspond to what's in the database
     data = JSON.parse(data);
-    console.log(" user data : \nemail : "+email_value+", password : "+password+"\n");
-    console.log(" server data : \nemail : "+data["EMAIL"]+", password : "+data["PASSWORD"]+"\n");
     if(data["EMAIL"] === email_value && data["PASSWORD"] === password) {
-        console.log("user exists");
         $("#login_form").attr("hidden",true);
         $("#login_register").html("Login successful!");
         $('#login_message')
-            .text("Bienvenue " + data["USERNAME"] + ".")
+            .text("Welcome " + data["USERNAME"] + ".")
             .removeAttr("hidden");
         $("#register_login_btn")
             .attr("id","logout_btn")
@@ -142,6 +127,8 @@ function login(data) {
         trying_to_logout = true;
         trying_to_login = false;
         $("#email").val("");
+
+        show_navbar_buttons();
     } else {
         $("#login_message").text("Either the user doesn't exist or the password is incorrect.");
     }
@@ -329,9 +316,7 @@ function next_page() {
  * gets next 10 cues in table
  */
 function update_table(data) {
-    console.log(data)
     data = JSON.parse(data);
-    console.log(data[0]['0']);
     let row = "row-";
     for(let i = 0; i < 10; i++) {
         for(let j = 0; j < 3; j++) {
@@ -362,24 +347,19 @@ function update_table(data) {
 }
 ////////// END CUE TABLE LOGIC //////////
 
+////////// WORD INFO LOGIC //////////
 /**
- * Hides the word info histogram div (by default we show word info in the table div), and adds some event listeners.
+ * @type {boolean}
+ * keeps track of wether the user wants to display a word information as a table or as a d3 histogram
+ * if true, then we display as table, if false then we display as a d3 histogram.
  */
-function setup_word_info() {
-    $("#word_info_div").hide();
-    $("#word_info_as_histogram_div").hide();
+var is_word_info_as_table = true;
 
-    $("#output_table").change(function() {
-        is_word_info_as_table=true;
-        display_word_info_as_table()
-    });
-
-    $("#output_histogram").change(function() {
-        is_word_info_as_table=false;
-        display_word_info_as_histogram()
-    });
-
-}
+/**
+ * @ {json}
+ * stores a word information retrieved on the database if a player clicks on it on the #/cue table.
+ */
+var word_info = null;
 
 /**
  * Displays the stored word_info as a table.
@@ -506,21 +486,121 @@ function circular_histogram() {
 
 }
 
+/**
+ * Setups some event listeners on the radio buttons so we display data as table or histogram
+ */
+function setup_word_info() {
+    $("#output_table").change(function() {
+        is_word_info_as_table=true;
+        display_word_info_as_table()
+    });
+
+    $("#output_histogram").change(function() {
+        is_word_info_as_table=false;
+        display_word_info_as_histogram()
+    });
+}
+
+////////// END WORD INFO LOGIC //////////
+
+////////// LEADERBOARD (TOP) LOGIC //////////
+/**
+ * Fetches top scores from database and displays them.
+ */
+function load_leaderboard() {
+    $.get("../php/sql_top.php", function(data) {
+        data = JSON.parse(data);
+
+        let table = $("#leaderboard_table");
+
+        for (let i=0; i<data.length; i++) {
+            let row = $(document.createElement("div"));
+            row.addClass("row");
+            row.append("<div class='col-4'>" + (i+1) + "</div><div class='col-4'>" + data[i]["USERNAME"] + "</div><div class='col-4'>" + data[i]["SCORE"] + "</div>");
+            table.append(row);
+        }
+
+
+    });
+}
+
+////////// END LEADERBOARD (TOP) LOGIC //////////
+
+
+////////// APP LOGIC //////////
+
 var email_value;      // LOGIN & REGISTRATION LOGIC : email address entered by the user (registration and login)
 var email_serialized;
 var password;   // LOGIN & REGISTRATION LOGIC : password entered by the user (registration and login)
 var username;   // LOGIN & REGISTRATION LOGIC : username entered by the user (registration)
 var cue;        // GAME LOGIC : cue entered by the user
 
+function show_login_and_register() {
+    $("#login_div").show();
+    $("#cue_div").hide();
+    $("#word_info_div").hide();
+    $("#game_div").hide();
+    $("#leaderboard_div").hide();
+    $("#welcome_div").hide();
+}
+
+function show_cue() {
+    $("#login_div").hide();
+    $("#cue_div").show();
+    $("#word_info_div").hide();
+    $("#game_div").hide();
+    $("#leaderboard_div").hide();
+    $("#welcome_div").hide();
+}
+
+function show_word_info() {
+    $("#login_div").hide();
+    $("#cue_div").show();
+    $("#word_info_div").show();
+    $("#game_div").hide();
+    $("#leaderboard_div").hide();
+    $("#welcome_div").hide();
+}
+
+function show_top_leaderboard() {
+    $("#login_div").hide();
+    $("#cue_div").hide();
+    $("#word_info_div").hide();
+    $("#game_div").show();
+    $("#leaderboard_div").show();
+    $("#welcome_div").hide();
+}
+
+function show_navbar_buttons() {
+    $("#navbar_cues_button").show();
+    $("#navbar_game_button").show();
+}
+
+function show_welcome_page() {
+    console.log("welcome page")
+    $("#login_div").hide();
+    $("#cue_div").hide();
+    $("#word_info_div").hide();
+    $("#game_div").hide();
+    $("#leaderboard_div").hide();
+
+    $("#navbar_cues_button").hide();
+    $("#navbar_game_button").hide();
+
+    $("#welcome_div").show();
+}
+
+
+
 /**
  * Sammy application logic. Manages functions associated with routes.
  */
 let app = $.sammy("body", function() {
-    this.get("", function() {
-        console.log("empty route")
-    });
+    this.get("#/", function() {
+        show_login_and_register();
+    })
 
-    this.post("#",function() {
+    this.post("#/",function() {
         // Login/Register Route
         // Tells which function to execute whether we're trying to login or register
         let email = $("#email");
@@ -529,12 +609,10 @@ let app = $.sammy("body", function() {
         password = sha1($("#password").val());          // encoding password with SHA1
         let password_serialized = "password="+password; // serializing by hand
         if(trying_to_login){
-            console.log("trying to login");
             $.post("../php/sql_login.php", email_serialized + "&" + password_serialized, login);
         } else {
             username = $("#username").val();
             let username_serialized = $("#username").serialize();
-            console.log("trying to register");
             $.post("../php/sql_register.php", email_serialized + "&" + password_serialized + "&" + username_serialized, register);
         }
         $("#password").val("");
@@ -553,18 +631,24 @@ let app = $.sammy("body", function() {
         let info_path = '/psycho.html#/info/';
         let regex = new RegExp(info_path);
         let path = this.path;
-
         if(regex.test(path)) {
+
             // If we get here it means that we just used an info/:word route.
-            let word = path.substring(regex.exec(path).index + info_path.length, path.length)
+            let word = path.substring(regex.exec(path).index + info_path.length, path.length);
             $.get("../php/sql_word.php","word="+word, function(data) {
                 word_info = JSON.parse(data);
-                is_word_info_as_table ? display_word_info_as_table() : display_word_info_as_histogram();
-                $("#word_info_div").show();
-            })
-        }
 
+                is_word_info_as_table ? display_word_info_as_table() : display_word_info_as_histogram();
+                $("#word_info_title_value").text(word);
+                show_word_info();
+            });
+        }
     })
+
+    this.get("", function() {
+        console.log("empty route")
+        show_welcome_page();
+    });
 
 })
 
@@ -572,8 +656,16 @@ let app = $.sammy("body", function() {
  * Called after html body is loaded. Setups the app.
  */
 function main() {
-    app.run();
+    // Initialize some event listeners on the word info display choice.
     setup_word_info();
+
+    // Initialize the first page of cues.
     previous_page();
+
+    // Initialize the top scores leaderboard.
+    load_leaderboard();
+
+    // Initialize the Sammy.js app.
+    app.run();
 }
 ////////// END APP LOGIC //////////
